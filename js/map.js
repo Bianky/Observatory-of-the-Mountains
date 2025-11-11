@@ -18,7 +18,7 @@ var pyreneesCounties = [
 ];
 
 // Load the comarques GeoJSON
-fetch('data/counties.shp')
+fetch('data/counties.json')
   .then(response => response.json())
   .then(data => {
     L.geoJSON(data, {
