@@ -15,7 +15,7 @@ The suggested folder structure is as follows:
 ├── backend
 │   └── R
 ├── docs
-│   ├── *additional documents useful to the repository*
+│   └── *additional documents useful to the repository*
 ├── data
 │   ├── data_available.xlsx
 │   └── geometry.geojson
