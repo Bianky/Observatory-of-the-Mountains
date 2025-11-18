@@ -5,17 +5,22 @@ This repostiory serves as a project management system deticated to the project *
 The suggested folder structure is as follows:
 
 ```
-$ tree
-.
-├── src
-│   ├── main.py
-│   └── utils
-│       └── helper.py
+
+├── frontend
+│   ├── css
+│       └── style.css
+│   └── js
+│       └── map.js
+│   └── index.html
+├── backend
+│   └── R
 ├── docs
-│   └── guide.md
-├── tests
-│   └── test_main.py
+│   ├── *additional documents useful to the repository*
+├── data
+│   ├── data_available.xlsx
+│   └── geometry.geojson
+│   └── socio-economy.json
+│   └── metadata.txt
 └── README.md
 
-3 directories, 5 files
 ```
