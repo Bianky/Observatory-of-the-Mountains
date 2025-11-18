@@ -1,33 +1,56 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<title>Observatory of the Mountains</title>
-	<meta charset="utf-8" />
+    <meta charset="utf-8" />
+    <title>Observatory of the Mountains</title>
 
-	<!-- style sheets -->
-	<link rel="stylesheet" href="css/style.css">
+    <!-- style sheets -->
+    <link rel="stylesheet" href="css/style.css">
 
-	<!-- leaflet -->
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-	<div class="header">
-		Observatory of the mountains
-	</div>
-	<div class="sidebar">
-		Sidebar
-	</div>
-	<div class="content">
-		<div id="map"></div>
-	</div>
-	<div class="footer">
-		Footer
+    <div class="header">
+        Observatory of the Mountains
+    </div>
+
+    <div class="sidebar">
+		<h3>Socio-econonmy</h3>
+        <h4>Population</h4>
+        <ul id="population-list"></ul>
+
+        <h4>Economy</h4>
+        <ul id="economy-list"></ul>
+
+        <h4>Work</h4>
+        <ul id="work-list"></ul>
+
+
+  		<div id="chartContainer">
+    	  <canvas id="variableChart"></canvas>
+ 		</div>
 	</div>
 
-	<!-- javascript -->
-	<script src="js/map.js"></script>
-	
+
+    <div class="content">
+        <div id="map"></div>
+    </div>
+
+    <div class="footer">
+        Footer
+    </div>
+
+    <!-- javascript -->
+    <script src="js/map.js"></script>
+
 </body>
 </html>
