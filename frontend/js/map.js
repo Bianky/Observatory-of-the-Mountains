@@ -35,12 +35,15 @@ const variableNames = {
     "inactive": "Inactive population (%)"
 };
 
+
+
 // initialize map and load data
 $(document).ready(function() {
     createMap();
     readGeoJSON(geometry);
     readJSON(socioeconomy);
 });
+
 
 // create the map
 function createMap() {
@@ -81,15 +84,55 @@ function readJSON(path) {
 
 // populate sidebar with categories
 function populateSidebarByCategory() {
+
+    const socioHeader = document.getElementById("socio-header");
+    const socioContainer = document.getElementById("categories-container");
+
+    if (socioHeader && socioContainer) {
+
+        // hide by default
+        socioContainer.style.display = "none";
+
+        // toggle on click
+        socioHeader.addEventListener("click", () => {
+
+            // current state BEFORE toggling
+            const isHidden = socioContainer.style.display === "none";
+
+            // toggle
+            socioContainer.style.display = isHidden ? "block" : "none";
+
+            const chartContainer = document.getElementById("chart-container");
+
+            if (isHidden) {
+                // was hidden → now shown
+                chartContainer.style.display = "block";
+
+            } else {
+                // was shown → now hidden
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+                chartContainer.style.display = "none";
+            }
+        });
+    }
+
+    // Populate sidebar variable lists
     for (const [cat, variables] of Object.entries(categories)) {
+
         const listEl = document.getElementById(`${cat}-list`);
+        if (!listEl) continue;
+
         variables.forEach(variable => {
+
             const li = document.createElement("li");
             li.textContent = variableNames[variable] || variable;
 
-            // attach click event
+            // Click event → draw chart
             li.addEventListener("click", () => {
-                buildLineChart(variable); // draw the chart
+                buildLineChart(variable);
             });
 
             listEl.appendChild(li);

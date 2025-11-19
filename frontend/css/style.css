@@ -86,4 +86,12 @@ body {
     grid-area: footer;
     padding: 10px;
     background-color: rgb(175, 175, 175);
+    display: flex;
+	align-items: center;
+}
+
+.logo img{
+    width: 100px; 
+    height: auto;
+    margin-left: 10px;
 }
