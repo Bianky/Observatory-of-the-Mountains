@@ -1,4 +1,4 @@
-# Observatory-of-the-Mountains
+# Observatory of the Mountains
 
 This repostiory serves as a project management system dedicated to the project *Observatory of the Mountains* developed by [Centre de Recerca Ecològica i Aplicacions Forestals (CREAF)](https://www.creaf.cat/en) and [Generalitat de Catalunya](https://web.gencat.cat/en/inici/index.html).
 
