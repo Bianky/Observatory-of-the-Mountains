@@ -5,8 +5,8 @@ let socioData;
 let chart;
 
 // paths to data
-const geometry = "data/geometry.geojson";
-const socioeconomy = "data/socio-economy.json";
+const geometry = "../data/geometry.geojson";
+const socioeconomy = "../data/socio-economy.json";
 
 const categories = {
     population: ["population", "density_h/km2", "0-24_%", "25-64_%", "65 i més_%", "pop_growthrate"],
