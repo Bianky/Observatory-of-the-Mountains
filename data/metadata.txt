@@ -1,31 +1,35 @@
-socio-economy.geojson METADATA
+geometry.geojson METADATA
 
-region: Pyrenees (Aran, Alta Ribagorça, Pallars Jussà, Pallars Sobirà,  Alt Urgell,  Solsonès, Cerdanya, Ripollès,  Berguedà); Catalunya (Idescat data row = Catalunya)
-year: 2015 - 2025
+region: Pyrenees (Aran, Alta Ribagorça, Pallars Jussà, Pallars Sobirà,  Alt Urgell,  Solsonès, Cerdanya, Ripollès,  Berguedà); Catalunya (Alt Camp, Alt Empordà, Alt Penedès, Alt Urgell, Alta Ribagorça, Anoia, Aran, Bages, Baix Camp, Baix Ebre, Baix Empordà, Baix Llobregat, Baix Penedès, Barcelonès, Berguedà, Cerdanya, Conca de Barberà, Garraf, Garrigues, Garrotxa, Gironès, Maresme, Moianès, Montsià, Noguera, Osona, Pallars Jussà, Pallars Sobirà, Pla d'Urgell, Pla de l'Estany, Priorat, Ribera d'Ebre, Ripollès, Segarra, Segrià, Selva, Solsonès, Tarragonès, Terra Alta, Urgell, Vallès Occidental, Vallès Oriental, Lluçanès)
 geometry: the extent of the region
+
+
+socio-economy.json METADATA
+
+region: Pyrenees (Aran, Alta Ribagorça, Pallars Jussà, Pallars Sobirà,  Alt Urgell,  Solsonès, Cerdanya, Ripollès,  Berguedà); Catalunya (Alt Camp, Alt Empordà, Alt Penedès, Alt Urgell, Alta Ribagorça, Anoia, Aran, Bages, Baix Camp, Baix Ebre, Baix Empordà, Baix Llobregat, Baix Penedès, Barcelonès, Berguedà, Cerdanya, Conca de Barberà, Garraf, Garrigues, Garrotxa, Gironès, Maresme, Moianès, Montsià, Noguera, Osona, Pallars Jussà, Pallars Sobirà, Pla d'Urgell, Pla de l'Estany, Priorat, Ribera d'Ebre, Ripollès, Segarra, Segrià, Selva, Solsonès, Tarragonès, Terra Alta, Urgell, Vallès Occidental, Vallès Oriental, Lluçanès | Idescat data row = Catalunya)
+year: 2015 - 2025
+area_km2: area of the region
 
  - the following description is conserning only the Pyrenees region as Catalunya region was always extracted as a ready made row from the Idescat dataset -
 
 POPULATION
-population: sum of population in all counties
-density_h/km2: sum of population in all counties/sum of area of all counties
-0-24_%: sum of all counties/total sum of all counties * 100
-25-64_%: sum of all counties/total sum of all counties * 100
-65 i més_%: sum of all counties/total sum of all counties * 100
-pop_growthrate: mean of all counties
+p_population: sum of population in all counties
+p_density_h/km2: sum of population in all counties/sum of area of all counties
+p_0_24_pct: sum of all counties/total sum of all counties * 100
+p_25_64_pct: sum of all counties/total sum of all counties * 100
+p_65imes_pct: sum of all counties/total sum of all counties * 100
+p_growthrate: mean of all counties
 
 ECONOMY
-GDP_mileur: sum of GDP in millions of eur in all counties
-GDP_percapita_eur: the mean of GDP per capita in eur in all counties
-agriculture_gva: sum of gva of given sector in millions of eur in all counties
-industry_gva: sum of gva of given sector in millions of eur in all counties
-construction_gva: sum of gva of given sector in millions of eur in all counties
-servis_gva: sum of gva of given sector in millions of eur in all counties
-GDHI_mileur: sum of GDHI in millions of eur in all counties
-GDHI_percpita_eur: mean of GDHI per capita in eur in all counties
-rib: sum of real investment budget in millions of eur in all counties
+e_GDP_mileur: sum of GDP in millions of eur in all counties
+e_gva_agri: sum of gva of given sector in millions of eur in all counties
+e_gva_indsutry: sum of gva of given sector in millions of eur in all counties
+e_gva_construction: sum of gva of given sector in millions of eur in all counties
+e_gva_servis: sum of gva of given sector in millions of eur in all counties
+e_GDHI_mileur: sum of GDHI in millions of eur in all counties
+e_rib: sum of real investment budget in millions of eur in all counties
 
 WORK
-active: sum of active population in all counties
-inactive: sum of inactive population in all counties
-unemp: sum of unemployed population
+w_active: sum of active population in all counties
+w_inactive: sum of inactive population in all counties
+w_unemp: sum of unemployed population
