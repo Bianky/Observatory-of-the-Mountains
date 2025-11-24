@@ -23,7 +23,7 @@ cat <- c("Alt Camp", "Alt Empordà", "Alt Penedès", "Alt Urgell", "Alta Ribagor
 path <- "../../data/socio-economical"
 
 # function to read and process data
-source("R/fucntions/process.R")
+source("R/process.R")
 
 
 # POPULATION -------------------------------------------------------------------
@@ -160,6 +160,9 @@ work <- list(active, inactive, unemp) %>%
 
 # bring all together
 socioeconomy <- list(population, economy, work) %>% 
-  reduce(full_join, by = c("region", "year"))
+  reduce(full_join, by = c("region", "year")) %>% 
+  mutate(w_active = w_active/p_population * 100, 
+         w_inactive = w_inactive/p_population * 100, 
+         w_unemp = w_unemp/p_population * 100)
 
 write_json(socioeconomy, file.path(path, "socio-economy.json"), append = FALSE)

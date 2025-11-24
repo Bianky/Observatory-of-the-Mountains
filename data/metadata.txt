@@ -30,9 +30,9 @@ e_GDHI_mileur: sum of GDHI in millions of eur in all counties
 e_rib: sum of real investment budget in millions of eur in all counties
 
 WORK
-w_active: sum of active population in all counties
-w_inactive: sum of inactive population in all counties
-w_unemp: sum of unemployed population
+w_active: percentage of active population in all counties
+w_inactive: percentage of inactive population in all counties
+w_unemp: percentage of unemployed population
 
 
 environment.json METADATA
