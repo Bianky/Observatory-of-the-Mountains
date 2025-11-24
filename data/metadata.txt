@@ -10,7 +10,7 @@ region: Pyrenees (Aran, Alta Ribagorça, Pallars Jussà, Pallars Sobirà,  Alt U
 year: 2015 - 2025
 area_km2: area of the region
 
- - the following description is conserning only the Pyrenees region as Catalunya region was always extracted as a ready made row from the Idescat dataset -
+ - the following variables were processed per a region -
 
 POPULATION
 p_population: sum of population in all counties
@@ -33,3 +33,38 @@ WORK
 w_active: sum of active population in all counties
 w_inactive: sum of inactive population in all counties
 w_unemp: sum of unemployed population
+
+
+environment.json METADATA
+
+region: Pyrenees (Aran, Alta Ribagorça, Pallars Jussà, Pallars Sobirà,  Alt Urgell,  Solsonès, Cerdanya, Ripollès,  Berguedà); Catalunya (Alt Camp, Alt Empordà, Alt Penedès, Alt Urgell, Alta Ribagorça, Anoia, Aran, Bages, Baix Camp, Baix Ebre, Baix Empordà, Baix Llobregat, Baix Penedès, Barcelonès, Berguedà, Cerdanya, Conca de Barberà, Garraf, Garrigues, Garrotxa, Gironès, Maresme, Moianès, Montsià, Noguera, Osona, Pallars Jussà, Pallars Sobirà, Pla d'Urgell, Pla de l'Estany, Priorat, Ribera d'Ebre, Ripollès, Segarra, Segrià, Selva, Solsonès, Tarragonès, Terra Alta, Urgell, Vallès Occidental, Vallès Oriental, Lluçanès | Idescat data row = Catalunya)
+year: 2015 - 2025
+
+ - the following variables were processed per a region -
+
+CLIMATE
+c_preci_mm: precipitation in mm mean of all counties
+c_wspeed_ms: wind speed in m/s mean of all counties
+c_temp_ave: mean temperature of all counties
+c_temp_avemax: mean maximum temperature of all counties
+c_temp_avemin: mean minimum temperature of all counties
+
+WATER
+w_domestic_consump: sum of domestic water consumption (from network) in thousands of m3 of all counties
+w_industry_consump: sum of industry water consumption (from entwork) in thousands of m3 of all counties
+w_total_network: sum of the total network consumption in thousands of m3 of all counties
+w_own_sources: sum of own sources in thousands of m3 of all counties
+w_total: the total sum of water consumption of m3 of all counties
+
+FOREST
+f_cleared_ha: sum of all cleared forest in ha in all counties
+f_reforested_ha: sum of all reforested forest in ha in all counties
+
+LAND
+l_forests: sum of forest area in ha in all counties
+l_bushes: sum of bushes area in ha in all counties
+l_others: sum of other area in ha in all counties
+l_novege: sum of area with no vegetation in ha in all counties
+l_crop_dry: sum of dry crop land in ha in all counties
+l_crop_irri: sum of irrigated crop land in ha in all counties
+l_urban: sum of urban area in ha in all counties
