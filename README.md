@@ -20,6 +20,7 @@ The suggested folder structure is as follows:
 │   ├── data_available.xlsx
 │   └── geometry.geojson
 │   └── socio-economy.json
+│   └── environment.json
 │   └── metadata.txt
 └── README.md
 
