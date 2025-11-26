@@ -14,6 +14,8 @@ The suggested folder structure is as follows:
 │   └── index.html
 ├── backend
 │   └── R
+│       └── functions
+│       └── scripts
 ├── docs
 │   └── *additional documents useful to the repository*
 ├── data
