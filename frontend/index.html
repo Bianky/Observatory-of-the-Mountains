@@ -19,54 +19,58 @@
 </head>
 <body>
 
-    <div class="header">
-        Observatory of the Mountains
-    </div>
-
-    <div id="sidebar">
-        <div id="tabs"></div>
-        <div id="categories-container"></div>
-        <div id="chart-container">
-            <canvas id="variableChart"></canvas>
+    <section class="hero">
+        <div class="hero-text">
+            Observatory of the Mountains
         </div>
-    </div>
+    </section>
 
-<!--   <div class="sidebar">
+    <div class="page-wrapper">
         
-		<h3 id="socio-header">Socio-economy</h3>
-        
-        <div id="categories-container" style="display:none;">
-            <h4>Population</h4>
-            <ul id="population-list"></ul>
+        <!-- <div class="header">
+            Observatory of the Mountains
+        </div> -->
 
-            <h4>Economy</h4>
-            <ul id="economy-list"></ul>
-
-            <h4>Work</h4>
-            <ul id="work-list"></ul>
+        <div id="sidebar">
+            <ul id="tabs"></ul>
+            <ul id="categories-container"></ul>
+            <div id="chart-container">
+                <canvas id="variableChart"></canvas>
+            </div>
         </div>
 
-  		<div id="chart-container">
-    	  <canvas id="variableChart"></canvas>
- 		</div>
-	</div> --> 
 
-
-    <div class="content">
-        <div id="map"></div>
-    </div>
-
-    <div class="footer">
-        © 2025 | <a href="https://www.creaf.cat/en"> Centre de Recerca Ecològica i Aplicacions Forestals (CREAF)</a>
-
-        <div class="logo">
-            <img src="https://www.creaf.cat/sites/default/files/2024-10/CREAF-SO-logo-ENG-web.jpg" >
+        <div class="content">
+            <div id="map"></div>
         </div>
-    </div>
+
+        <div class="footer">
+        © 2025  &nbsp;  Centre de Recerca Ecològica i Aplicacions Forestals  &nbsp; <!-- <a href="https://www.creaf.cat/en"> (CREAF)  </a> -->
+
+            <!-- <div class="logo">
+                <img src="https://www.creaf.cat/sites/default/files/2024-10/CREAF-SO-logo-ESP.png" >
+            </div> -->
+        </div>
+
     </div>
 
     <!-- javascript -->
     <script src="js/map.js"></script>
+
+    <script>
+    window.addEventListener('scroll', () => {
+        const hero = document.querySelector('.hero');
+        const dashboard = document.querySelector('.page-wrapper');
+
+        if (window.scrollY > 50) {  // adjust threshold
+            dashboard.classList.add('visible');  // show dashboard
+            //hero.classList.add('fade-out');      // fade hero
+        } else {
+            dashboard.classList.remove('visible');
+            //hero.classList.remove('fade-out');
+        }
+    });
+    </script>
 
 </body>
 </html>

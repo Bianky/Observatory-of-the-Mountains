@@ -1,20 +1,66 @@
+.hero {
+
+    width: 100%;
+    height: 100vh;
+    background-image: url('../../data/images/camino_15.jpg');
+    background-size: cover;
+    background-position: center 30%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    text-align: center;
+    padding: 0;
+    overflow: hidden;
+    margin: 0;
+}
+
+.hero.fade-out {
+    opacity: 0;                 /* fade out */
+    pointer-events: none;       /* allow clicks to pass through */
+}
+
+.hero-text {
+    color: white;
+    transform: translateY(-20px); /* move title UP 50px */
+    font-family: monospace;
+    font-size: x-large;
+}
+
+/* Push dashboard below hero */
+.page-wrapper {
+    display: grid;
+    grid-template-columns: 650px 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        /* "header header" */
+        "sidebar content"
+        "footer footer";
+    gap: 0;
+    width: 100%;
+
+    transform: translateY(50px); /* start slightly down */
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    z-index: 1;  /* below hero while fading */
+}
+
+.page-wrapper.visible {
+    opacity: 1;
+    transform: translateY(0);    /* moves to normal position */
+}
+
 /* Reset and full size */
 body, html {
     margin: 0;
-    height: 100%;
+    padding: 0;
     width: 100%;
-    font-family: Arial, sans-serif;
+    height: 100%;
+    font-family: monospace; /* or whatever font you want */
 }
 
 /* Grid layout */
 body {
-    display: grid;
-    grid-template-rows: 80px 1fr 50px;
-    grid-template-columns: 550px 1fr;
-    grid-template-areas: 
-        "header header"
-        "sidebar content"
-        "footer footer";
+    display: block;
 }
 
 /* Header */
@@ -29,34 +75,14 @@ body {
 }
 
 /* Sidebar */
-.sidebar {
+#sidebar {
     grid-area: sidebar;
-    padding: 10px;
-    background-color: #f2f2f2;
+    background-color: white;
     overflow-y: auto;
+    padding: 15px 1px 1px 1px;  /* top, right, bottom, left */               
+    font-family: monospace;
 }
 
-.sidebar h3 {
-    margin-top: 10px;
-    margin-bottom: 5px;
-    font-size: 1.2em;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding-left: 5px;
-    margin-bottom: 15px;
-}
-
-.sidebar li {
-    padding: 5px;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-.sidebar li:hover {
-    background-color: #ddd;
-}
 
 /* Content area */
 .content { 
@@ -71,7 +97,8 @@ body {
 #map {
     flex: 1;  /*fill available vertical space */
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 0px;    
+    min-height: 800px; /* adjust as needed */
 }
 
 
@@ -79,19 +106,26 @@ body {
 #variableChart {
     width: 100%;
     height: 300px;
+    padding: 10px 0px 0px 40px;  /* top, right, bottom, left */    ;
 }
 
 /* Footer */
 .footer {
     grid-area: footer;
+    height: 60%;
     padding: 10px;
-    background-color: rgb(175, 175, 175);
+    padding-left: 10px;
+    background-color: lightgray;
     display: flex;
-	align-items: center;
+    text-align: center;
+    font-size: 0.9em;
+    font-family: Arial, Helvetica, sans-serif;
+    color: grey;
+    justify-content: center;
 }
 
 .logo img{
     width: 100px; 
     height: auto;
-    margin-left: 10px;
+    margin-left: 7px;
 }

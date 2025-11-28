@@ -19,18 +19,44 @@ const categories_socioeconomy = {
         "p_growthrate"
     ],
     economy: [
-        "e_GDP_mileur",
-        "e_gva_agri",
-        "e_gva_industry",
-        "e_gva_construction",
-        "e_gva_servis",
-        "e_GDHI_mileur",
-        "e_rib"
+        //"e_GDP_mileur",
+        //"e_GDP_mileur_pc",
+        "e_GDP_pi",
+        
+        //"e_gva_agri",
+        //"e_gva_agri_pc",
+        "e_gva_agri_pi",
+        
+        //"e_gva_industry",
+        //"e_gva_industry_pc",
+        "e_gva_industry_pi",
+        
+        //"e_gva_construction",
+        //"e_gva_construction_pc",
+        "e_gva_construction_pi",
+        
+        //"e_gva_servis",
+        //"e_gva_servis_pc",
+        "e_gva_servis_pi",
+        
+        //"e_GDHI_mileur",
+        //"e_GDHI_mileur_pc",
+        "e_GDHI_mileur_pi",
+        
+        //"e_rib",
+        //"e_rib_pc",
+        "e_rib_pi"
     ],
+
     work: [
         "w_unemp",
         "w_active",
         "w_inactive"
+    ],
+
+    engagement: [
+        "eng_found",
+        "eng_assoc",
     ]
 };
 
@@ -74,18 +100,42 @@ const variableNames = {
     "p_growthrate": "Population growth rate",
 
     // ECONOMY
-    "e_GDP_mileur": "GDP (million €)",
-    "e_gva_agri": "GVA Agriculture (million €)",
-    "e_gva_industry": "GVA Industry (million €)",
-    "e_gva_construction": "GVA Construction (million €)",
-    "e_gva_servis": "GVA Services (million €)",
-    "e_GDHI_mileur": "GDHI (million €)",
-    "e_rib": "Real Investment Budget (million €)",
+    //"e_GDP_mileur": "GDP (million €)",
+    //"e_GDP_mileur_pc": "GDP (per county)",
+    "e_GDP_pi": "GDP (per inhabitant in €)",
+    
+    //"e_gva_agri": "GVA Agriculture (million €)",
+    //"e_gva_agri_pc": "GVA Agriculture (per county)",
+    "e_gva_agri_pi": "GVA Agriculture (per inhabitant in €)",
+    
+    //"e_gva_industry": "GVA Industry (million €)",
+    //"e_gva_industry_pc": "GVA Industry (per county)",
+    "e_gva_industry_pi": "GVA Industry (per inhabitant in €)",
+    
+    //"e_gva_construction": "GVA Construction (million €)",
+    //"e_gva_construction_pc": "GVA Construction (per county)",
+    "e_gva_construction_pi": "GVA Construction (per inhabitant in €)",
+    
+    //"e_gva_servis": "GVA Services (million €)",
+    //"e_gva_servis_pc": "GVA Services (per county)",
+    "e_gva_servis_pi": "GVA Services (per inhabitant in €)",
+    
+    //"e_GDHI_mileur": "GDHI (million €)",
+    //"e_GDHI_mileur_pc": "GDHI (per county)",
+    "e_GDHI_mileur_pi": "GDHI (per inhabitant in €)",
+    
+    //"e_rib": "RIB (million €)",
+    //"e_rib_pc": "RIB (per county)",
+    "e_rib_pi": "RIB (per inhabitant in €)",
 
     // WORK
     "w_unemp": "Unemployment (%)",
     "w_active": "Active population (%)",
     "w_inactive": "Inactive population (%)",
+
+    // ENGAGEMENT
+    "eng_found": "Foundations (per inhabitant)",
+    "eng_assoc": "Associations (per inhabitant)",
 
     // CLIMATE
     "c_preci_mm": "Precipitation (mm)",
@@ -131,7 +181,7 @@ $(document).ready(function() {
 function createMap() {
     map = L.map('map').setView([41.6, 1.9], 7); // center on Catalunya
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 }
@@ -154,18 +204,18 @@ function mapGeoJSON(data) {
             // If this feature is part of the Pyrenees region → make it green
             if (feature.properties.region === "Pyrenees") {
                 return {
-                    color: "#1f8a3b",     // border color
+                    color: "#807768",     // border color
                     weight: 2,
-                    fillColor: "#3cc46e", // fill color
+                    fillColor: "#807768", // fill color
                     fillOpacity: 0.7
                 };
             }
 
             // Default style for all other regions
             return {
-                color: "#444",
+                color: "#d8e0e3",
                 weight: 1,
-                fillColor: "#cccccc",
+                fillColor: "#d8e0e3",
                 fillOpacity: 0.5
             };
         }
@@ -278,8 +328,16 @@ function buildLineChart(variable, dataset) {
         data: {
             labels: years,
             datasets: [
-                { label: "Catalunya", data: catalunyaValues, borderColor: "blue", fill: false },
-                { label: "Pyrenees", data: pyreneesValues, borderColor: "green", fill: false }
+                { label: "Catalunya", 
+                  data: catalunyaValues, 
+                  borderColor: "#d8e0e3", 
+                  backgroundColor: "#d8e0e3",
+                  fill: false },
+                { label: "Pyrenees", 
+                  data: pyreneesValues,         
+                  borderColor: "#807768",     // ← your color
+                  backgroundColor: "#807768", // optional (for points or filling) fill: false 
+                }
             ]
         },
         options: {
