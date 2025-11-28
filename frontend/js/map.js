@@ -5,9 +5,9 @@ let socioData;
 let chart;
 
 // paths to data
-const geometry = "../data/geometry.geojson";
-const socioeconomy = "../data/socio-economy.json";
-const environment = "../data/environment.json";
+const geometry = "./data/geometry.geojson";
+const socioeconomy = "./data/socio-economy.json";
+const environment = "./data/environment.json";
 
 const categories_socioeconomy = {
     population: [
