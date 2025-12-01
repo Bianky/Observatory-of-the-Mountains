@@ -14,10 +14,23 @@
     margin: 0;
 }
 
-.hero-btn {
+.about-btn {
     position: absolute;  /* position relative to .hero */
     top: 20px;           /* distance from top */
-    right: 20px;         /* distance from right */
+    right: 170px;         /* distance from right */
+    padding: 20px 30px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: large;
+    transition: background-color 0.3s ease;
+}
+
+.data-btn {
+    position: absolute;  /* position relative to .hero */
+    top: 20px;           /* distance from top */
+    right: 70px;         /* distance from right */
     padding: 20px 30px;
     color: white;
     text-decoration: none;
@@ -29,9 +42,17 @@
 
 .about{
     max-width: 800px; /* optional: limits line length for readability */
-    margin: 0 auto;   /* centers container horizontally */
-    padding: 20px;    /* space from all edges */ 
+    margin: 0;   /* centers container horizontally */
 }
+
+.about-page{
+    padding: 15px 1px 1px 25px;  /* top, right, bottom, left */  
+}
+
+.data-page{
+    padding: 15px 1px 1px 25px;  /* top, right, bottom, left */  
+}
+
 
 .hero.fade-out {
     opacity: 0;                 /* fade out */

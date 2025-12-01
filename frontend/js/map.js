@@ -77,7 +77,9 @@ const categories_environment = {
     ],
     forest: [
         "f_cleared_ha",
-        "f_reforested_ha"
+        "f_reforested_ha",
+        "f_relative_reforested"
+
     ],
     land: [
         "l_forests",
@@ -145,24 +147,27 @@ const variableNames = {
     "c_temp_avemin": "Mean min temperature (°C)",
 
     // WATER
-    "w_domestic_consump": "Domestic water consumption (thousand m³)",
-    "w_industry_consump": "Industry water consumption (thousand m³)",
-    "w_total_network": "Total network water consumption (thousand m³)",
-    "w_own_sources": "Own water sources (thousand m³)",
-    "w_total": "Total water consumption (m³)",
+    "w_domestic_consump": "Domestic water consumption (m³/inhabitant)",
+    "w_industry_consump": "Industry water consumption (m³/inhabitant)",
+    "w_total_network": "Total network water consumption (m³/inhabitant)",
+    "w_own_sources": "Own water sources (m³/inhabitant)",
+    "w_total": "Total water consumption (m³/inhabitant)",
+    
 
     // FOREST
-    "f_cleared_ha": "Cleared forest (ha)",
-    "f_reforested_ha": "Reforested area (ha)",
+    "f_cleared_ha": "Cleared forest (%)",
+    "f_reforested_ha": "Reforested area (%)",
+    "f_relative_reforested": "Relative reforested area (%)",
+
 
     // LAND
-    "l_forests": "Forest area (ha)",
-    "l_bushes": "Bushes area (ha)",
-    "l_others": "Other land area (ha)",
-    "l_novege": "No vegetation (ha)",
-    "l_crop_dry": "Dry crop land (ha)",
-    "l_crop_irri": "Irrigated crop land (ha)",
-    "l_urban": "Urban area (ha)"
+    "l_forests": "Forest area (%)",
+    "l_bushes": "Bushes area (%)",
+    "l_others": "Other land area (%)",
+    "l_novege": "No vegetation (%)",
+    "l_crop_dry": "Dry crop land (%)",
+    "l_crop_irri": "Irrigated crop land (%)",
+    "l_urban": "Urban area (%)"
 };
 
 

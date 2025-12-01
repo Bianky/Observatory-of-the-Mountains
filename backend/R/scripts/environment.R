@@ -50,6 +50,18 @@ climate <- list(preci, temp) %>%
   reduce(full_join, by = c("region", "year"))
 
 # WATER ------------------------------------------------------------------------
+path <- "../../data/socio-economical"
+density <- process(
+  folder = "population/density",
+  skip = 7,
+  n_max = Inf,
+  col_names = c("county", "p_population", "area_km2", "density_hkm2"),
+  drop_cols = c("density_hkm2"),
+  fun = sum
+) %>% 
+  mutate(p_density_hkm2 = p_population/area_km2)
+
+path <- "../../data/environmental"
 water <- process(
   folder = "water/consump",
   skip = 9,
@@ -59,6 +71,10 @@ water <- process(
   drop_cols = c(),
   fun = sum
 )
+
+water <- list(water, density) %>% 
+  reduce(full_join, by = c("region", "year")) %>% 
+  mutate(across(starts_with("w_"), ~ (.x*1000) /p_population)) 
 
 # FOREST -----------------------------------------------------------------------
 clearing <- process(
@@ -80,7 +96,8 @@ refor <- process(
 )
 
 forest <- list(clearing, refor) %>% 
-  reduce(full_join, by = c("region", "year"))
+  reduce(full_join, by = c("region", "year")) %>% 
+  mutate(f_relative_reforested = f_reforested_ha/f_cleared_ha * 100)
 
 # LANDUSE ----------------------------------------------------------------------
 land <- process(
@@ -91,6 +108,15 @@ land <- process(
   drop_cols = c(),
   fun = sum
 )
+
+forest <- list(land, forest) %>% 
+  reduce(full_join, by = c("region", "year")) %>% 
+  mutate(across(c("f_reforested_ha", "f_cleared_ha"), ~ .x / l_forests * 100)) %>% 
+  select(-starts_with("l_"))
+
+land <- list(land, density) %>% 
+  reduce(full_join, by = c("region", "year")) %>% 
+  mutate(across(starts_with("l_"), ~ .x /(area_km2*100) * 100)) 
 
 # bring all together
 environment <- list(climate, water, forest, land) %>% 
