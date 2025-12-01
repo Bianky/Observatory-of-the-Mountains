@@ -14,6 +14,25 @@
     margin: 0;
 }
 
+.hero-btn {
+    position: absolute;  /* position relative to .hero */
+    top: 20px;           /* distance from top */
+    right: 20px;         /* distance from right */
+    padding: 20px 30px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: large;
+    transition: background-color 0.3s ease;
+}
+
+.about{
+    max-width: 800px; /* optional: limits line length for readability */
+    margin: 0 auto;   /* centers container horizontally */
+    padding: 20px;    /* space from all edges */ 
+}
+
 .hero.fade-out {
     opacity: 0;                 /* fade out */
     pointer-events: none;       /* allow clicks to pass through */

@@ -158,11 +158,50 @@ unemp <- process(
 work <- list(active, inactive, unemp) %>% 
   reduce(full_join, by = c("region", "year"))
 
+# ENGAGEMENT -------------------------------------------------------------------
+
+assoc <- process(
+  folder = "engagement/associations",
+  skip = 11,
+  n_max = Inf,
+  col_names = c("county", "social_assis", "culture", "teaching_research", "rights", "sectors", "space", "health", "others", "eng_assoc"),
+  drop_cols = c(2:9),
+  fun = sum 
+)
+
+found <- process(
+  folder = "engagement/foundations",
+  skip = 7,
+  n_max = 55,
+  col_names = c("county", "assistance", "cultural", "teachers", "scientific", "eng_found"),
+  drop_cols = c(2:5),
+  fun = sum 
+)
+
+engagement <- list(assoc, found)%>% 
+  reduce(full_join, by = c("region", "year"))
+
+
 # bring all together
-socioeconomy <- list(population, economy, work) %>% 
+socioeconomy <- list(population, economy, work, engagement) %>% 
   reduce(full_join, by = c("region", "year")) %>% 
-  mutate(w_active = w_active/p_population * 100, 
+  mutate(e_GDP_pc = if_else(`region` == "Pyrenees", e_GDP_mileur/9, e_GDP_mileur/43)*1000000,
+         e_GDP_pi = e_GDP_mileur/p_population*1000000,
+         e_gva_agri_pc = if_else(`region` == "Pyrenees", e_gva_agri/9, e_gva_agri/43)*1000000, 
+         e_gva_agri_pi = e_gva_agri/p_population*1000000, 
+         e_gva_industry_pc = if_else(`region` == "Pyrenees", e_gva_industry/9, e_gva_industry/43)*1000000, 
+         e_gva_industry_pi = e_gva_industry/p_population*1000000,
+         e_gva_construction_pc = if_else(`region` == "Pyrenees", e_gva_construction/9, e_gva_construction /43)*1000000, 
+         e_gva_construction_pi = e_gva_construction/p_population*1000000,
+         e_gva_servis_pc = if_else(`region` == "Pyrenees", e_gva_servis/9, e_gva_servis/43)*1000000,
+         e_gva_servis_pi = e_gva_servis/p_population*1000000,
+         e_GDHI_mileur_pc = if_else(`region` == "Pyrenees", e_GDHI_mileur/9, e_GDHI_mileur/43)*1000000,
+         e_GDHI_mileur_pi = e_GDHI_mileur/p_population*1000000,
+         w_active = w_active/p_population * 100, 
          w_inactive = w_inactive/p_population * 100, 
-         w_unemp = w_unemp/p_population * 100)
+         w_unemp = w_unemp/p_population * 100, 
+         e_rib_pc = if_else(`region` == "Pyrenees", e_rib/9, e_rib/43)*1000000,
+         e_rib_pi = e_rib/p_population*1000000,
+         eng_found = eng_found/p_population)
 
 write_json(socioeconomy, file.path(path, "socio-economy.json"), append = FALSE)
