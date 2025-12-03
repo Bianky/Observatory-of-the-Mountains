@@ -46,6 +46,20 @@
 
         <div class="content">
             <div id="map"></div>
+
+        <div id="year-slider-container" style="margin: 10px 0; width: 100%;">
+        <input 
+            type="range" 
+            id="year-slider" 
+            min="2015" 
+            max="2025" 
+            step="1" 
+            value="2020"
+            style="width: 100%;"
+        
+        >
+        <span id="year-label">2020</span>
+        </div>
         </div>
 
         <div class="footer">
@@ -59,7 +73,7 @@
     </div>
 
     <!-- javascript -->
-    <script src="js/map.js"></script>
+    <script src="js/map_inh.js"></script>
 
     <script>
     window.addEventListener('scroll', () => {

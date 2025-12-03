@@ -1,9 +1,12 @@
-
 // Global variables
 let map;
 let geoLayer;
 let socioData;
 let chart;
+
+// these two are for the interactivness of the map
+window.currentVariable = null;
+let dataEnv = null;
 
 // paths to data
 const geometry = "./data/geometry.geojson";
@@ -45,7 +48,7 @@ const categories_socioeconomy = {
         "e_GDHI_mileur_pi",
         
         //"e_rib",
-        //"e_rib_pc",
+        "e_rib_pc",
         "e_rib_pi"
     ],
 
@@ -100,7 +103,7 @@ const variableNames = {
     "p_0_24_pct": "Age 0–24 (%)",
     "p_25_64_pct": "Age 25–64 (%)",
     "p_65imes_pct": "Age 65+ (%)",
-    "p_growthrate": "Population growth rate",
+    "p_growthrate": "Population growth rate (‰)",
 
     // ECONOMY
     //"e_GDP_mileur": "GDP (million €)",
@@ -128,7 +131,7 @@ const variableNames = {
     "e_GDHI_mileur_pi": "GDHI (per inhabitant in €)",
     
     //"e_rib": "RIB (million €)",
-    //"e_rib_pc": "RIB (per county)",
+    "e_rib_pc": "RIB (per county)",
     "e_rib_pi": "RIB (per inhabitant in €)",
 
     // WORK
@@ -153,7 +156,7 @@ const variableNames = {
     "w_total_network": "Total network water consumption (m³/inhabitant)",
     "w_own_sources": "Own water sources (m³/inhabitant)",
     "w_total": "Total water consumption (m³/inhabitant)",
-    
+
 
     // FOREST
     "f_cleared_ha": "Cleared forest (%)",
@@ -304,8 +307,15 @@ function showCategory(type) {
         vars.forEach(v => {
             const li = document.createElement("li");
             li.textContent = variableNames[v] || v;
-            li.addEventListener("click", () => buildLineChart(v, data));
-            ul.appendChild(li);
+           // li.addEventListener("click", () => buildLineChart(v, data));
+           // ul.appendChild(li);
+            li.addEventListener("click", () => {
+                window.currentVariable = v;
+                buildLineChart(v, data);      // your existing chart
+                updateChoropleth(v, +slider.value); // update map
+            });
+            
+            ul.appendChild(li); 
         });
         catDiv.appendChild(ul);
         container.appendChild(catDiv);
@@ -356,3 +366,63 @@ function buildLineChart(variable, dataset) {
         }
     });
 }
+
+function getDataByYear(variable, year) {
+    const dataset = dataEnv; // or socioData if variable is socio
+    return dataset.filter(d => d.year === year)
+                  .reduce((acc, d) => {
+                      acc[d.county] = d[variable];
+                      return acc;
+                  }, {});
+}
+
+function updateChoropleth(variable, year) {
+    const yearData = getDataByYear(variable, year);
+
+    geoLayer.eachLayer(layer => {
+        const countyName = layer.feature.properties.county;
+        const value = yearData[countyName];
+
+        // Create color scale
+        const color = value === undefined ? '#d8e0e3' : getColor(variable, value);
+
+        layer.setStyle({
+            fillColor: color,
+            fillOpacity: 0.7,
+            color: '#999',
+            weight: 1
+        });
+
+        // Update popup
+        layer.bindPopup(`${countyName}<br>${variableNames[variable]}: ${value ?? 'N/A'}`);
+    });
+}
+
+function getColor(variable, value) {
+    // Example: simple green → red gradient for forest variables
+    if (["f_cleared_ha","f_reforested_ha","f_relative_reforested"].includes(variable)) {
+        return value > 50 ? '#00441b' : `rgb(0,${Math.round(255*(value/50))},0)`; 
+    }
+    // Water consumption example
+    if (["w_domestic_consump","w_total"].includes(variable)) {
+        return value > 200 ? '#08306b' : `rgb(0,0,${Math.round(255*(value/200))})`;
+    }
+    // Fallback
+    return '#d8e0e3';
+}
+
+const slider = document.getElementById("year-slider");
+const yearLabel = document.getElementById("year-label");
+
+slider.addEventListener("input", () => {
+    const year = +slider.value;
+    yearLabel.textContent = year;
+
+    // Update map for currently selected variable
+    if(window.currentVariable) {
+        updateChoropleth(window.currentVariable, year);
+    }
+});
+
+window.currentVariable = "f_cleared_ha"; // default variable
+updateChoropleth(window.currentVariable, +slider.value);
