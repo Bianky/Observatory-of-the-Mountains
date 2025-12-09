@@ -169,3 +169,17 @@ body {
     height: auto;
     margin-left: 7px;
 }
+
+.info.legend {
+    background: white;
+    padding: 8px;
+    border-radius: 4px;
+    line-height: 16px;
+    font-size: 13px;
+}
+.info.legend i {
+    width: 20px;
+    height: 10px;
+    float: left;
+    margin-right: 6px;
+}

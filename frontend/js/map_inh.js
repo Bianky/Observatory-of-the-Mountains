@@ -54,7 +54,13 @@ const categories_socioeconomy = {
 
     work: [
         "w_unemp",
+        "w_unemp_men",
+        "w_unemp_women",
         "w_active",
+        "w_active_men",
+        "w_active_women",
+        "w_inactive_men",
+        "w_inactive_women",
         "w_inactive"
     ],
 
@@ -136,8 +142,14 @@ const variableNames = {
 
     // WORK
     "w_unemp": "Unemployment (%)",
+    "w_unemp_men": "Unemployment of men(%)",
+    "w_unemp_women": "Unemployment of women(%)",
     "w_active": "Active population (%)",
+    "w_active_men": "Active population of men (%)",
+    "w_active_women": "Active population of women (%)",
     "w_inactive": "Inactive population (%)",
+    "w_inactive_men": "Inactive population of men (%)",
+    "w_inactive_women": "Inactive population of women (%)",
 
     // ENGAGEMENT
     "eng_found": "Foundations (per county)",
