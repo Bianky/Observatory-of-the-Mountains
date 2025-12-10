@@ -5,8 +5,12 @@ let socioData;
 let dataEnv;
 let chart;
 let socioMapData;
+let envMapData;
 
-let mapData = {};  // { year: { countyName: value, ... } }
+let currentMapType = "socio";  
+
+let mapDataSocio = {}; // for socioeconomic choropleth
+let mapDataEnv = {};   // for environment choropleth
 let currentVariable = null;
 
 let regionLayer;
@@ -14,12 +18,13 @@ let countyLayer;
 
 // paths to data
 const geometry = "./data/geometry.geojson";
-const geometry_counties = "./data/geometry_counties.geojson";
+const geometry_counties = "./data/geometry_counties_cat.geojson";
 
 const socioeconomy = "./data/socio-economy.json";
 const socioeconomy_counties = "./data/socio-economy_counties.json";
 
 const environment = "./data/environment.json";
+const environment_counties = "./data/environment_counties.json";
 
 const categories_socioeconomy = {
     population: [
@@ -181,7 +186,7 @@ const variableNames = {
     // FOREST
     "f_cleared_ha": "Cleared forest (%)",
     "f_reforested_ha": "Reforested area (%)",
-    "f_relative_reforested": "Relative reforested area (%)",
+    "f_relative_reforested": "Relative reforested area",
 
 
     // LAND
@@ -203,6 +208,7 @@ $(document).ready(function() {
     readJSON(socioeconomy, "socio-chart");
     readJSON(socioeconomy_counties, "socio-map");
     readJSON(environment, "env-chart");
+    readJSON(environment_counties, "env-map");
 });
 
 
@@ -231,23 +237,47 @@ function readGeoJSON(path, type) {
             mapGeoJSON(data, type); // pass type!
         })
         .catch(error => console.error("Error loading GeoJSON:", error));
+    
 }
 
 // function to map GeoJSON data
 function mapGeoJSON(data, type) {
     const layer = L.geoJson(data, {
         style: function(feature) {
-            if (type === "regions" && feature.properties.region === "Pyrenees") {
-                return { color: "#807768", weight: 2, fillColor: "#807768", fillOpacity: 0.7 };
+            if (type === "regions" && feature.properties.region === "Catalunya") {
+                return { color: "#807768", weight: 2, fillColor: "#807768", fillOpacity: 1 };
             }
-            return { color: "#d8e0e3", weight: 1, fillColor: "#d8e0e3", fillOpacity: 0.5 };
+            return { color: "#d8e0e3", weight: 1, fillColor: "#d8e0e3", fillOpacity: 1 };
         }
     }).addTo(map);
 
     if(type === "regions") regionLayer = layer;
-    else if(type === "counties") countyLayer = layer;
+    else if(type === "counties") {
+    // Split Catalunya out
+    const catalunyaFeature = data.features.find(f => f.properties.county === "Catalunya");
+    const otherCounties = data.features.filter(f => f.properties.county !== "Catalunya");
 
-    if(type === "counties") map.fitBounds(layer.getBounds());  // optional
+    // Layer for other counties
+    countyLayer = L.geoJson({ ...data, features: otherCounties }, {
+        style: { color: "#d8e0e3", weight: 1, fillColor: "#d8e0e3", fillOpacity: 1 }
+    }).addTo(map);
+
+    // Layer for Catalunya separately
+    if(catalunyaFeature) {
+        catalunyaLayer = L.geoJson(catalunyaFeature, {
+            style: { color: "#807768", weight: 2, fillColor: "#807768", fillOpacity: 1 }
+        }).addTo(map);
+    }
+
+    // Fix z-order: region at bottom, counties in middle, Catalunya on top
+    if(regionLayer) regionLayer.bringToBack();
+    countyLayer.bringToFront();
+    if(catalunyaLayer) catalunyaLayer.bringToFront();
+}
+    if (regionLayer && countyLayer) {
+        regionLayer.bringToBack();
+        countyLayer.bringToFront();
+    }
 }
 
 // read json files
@@ -263,26 +293,23 @@ function readJSON(path, type) {
 
                 case "socio-map":
                     socioMapData = data;
-
-                    // build mapData for choropleth
                     data.forEach(row => {
-                        if (!mapData[row.year]) mapData[row.year] = {};
-                        mapData[row.year][row.county] = row;
+                        if (!mapDataSocio[row.year]) mapDataSocio[row.year] = {};
+                        mapDataSocio[row.year][row.county] = row;
                     });
                     break;
 
-                case "counties":
-                    // this is the GeoJSON for county shapes
-                    countyLayer = L.geoJson(data, {
-                        style: function(feature) {
-                            return { color: "#d8e0e3", weight: 1, fillColor: "#d8e0e3", fillOpacity: 0.5 };
-                        }
-                    }).addTo(map);
-                    map.fitBounds(countyLayer.getBounds());
-                    break;
 
                 case "env-chart":
                     dataEnv = data;
+                    break;
+
+                case "env-map":
+                    envMapData = data;
+                    data.forEach(row => {
+                        if (!mapDataEnv[row.year]) mapDataEnv[row.year] = {};
+                        mapDataEnv[row.year][row.county] = row;
+                    });
                     break;
 
                 default:
@@ -356,24 +383,22 @@ function showCategory(type) {
 
         const ul = document.createElement("ul");
         vars.forEach(v => {
-            const li = document.createElement("li");
-            li.textContent = variableNames[v] || v;
+                const li = document.createElement("li");
+                li.textContent = variableNames[v] || v;
 
-            // Click listener: update chart and choropleth
-            li.addEventListener("click", () => {
-                currentVariable = v;                    // store selected variable
-                buildLineChart(v, data);                // update chart
-                updateChoropleth(
-                    document.getElementById("year-slider").value,  // current year
-                    v
-                );
+                // Click listener: update chart and choropleth
+                li.addEventListener("click", () => {
+                    currentVariable = v;
+                    currentMapType = (type === "socio-chart") ? "socio" : "env";  // <- store type
+                    buildLineChart(v, data);
+                    updateChoropleth(document.getElementById("year-slider").value, v, currentMapType);
+                });
+
+                ul.appendChild(li);  // <- must be inside the forEach
             });
-
-            ul.appendChild(li);
-        });
-        catDiv.appendChild(ul);
-        container.appendChild(catDiv);
-    }
+                    catDiv.appendChild(ul);
+                    container.appendChild(catDiv);
+                }
 
     // Highlight the active tab
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -506,27 +531,27 @@ legend.update = function (min = 0, max = 1, scale = () => "#ccc") {
 };
 
 
-function updateChoropleth(year, variable) {
-    if (!mapData[year]) return;
+function updateChoropleth(year, variable, type = "socio") {
+    const dataMap = type === "socio" ? mapDataSocio : mapDataEnv;
+    if (!dataMap[year]) return;
 
     currentVariable = variable;
-    const rows = Object.values(mapData[year]);
+    const rows = Object.values(dataMap[year]);
     const values = rows.map(r => r[variable]).filter(v => typeof v === "number");
 
     const { min, max, scale } = getColorScale(values);
 
-    // Update legend
     legend.update(min, max, scale);
 
-    // Only update counties
+    // Update counties
     countyLayer.eachLayer(layer => {
         const county = layer.feature.properties.county;
-        const row = mapData[year][county];
+        const row = dataMap[year][county];
         const value = row ? row[variable] : null;
 
         layer.setStyle({
             fillColor: scale(value),
-            fillOpacity: 0.5,
+            fillOpacity: 1,
             color: "#666",
             weight: 1
         });
@@ -534,8 +559,28 @@ function updateChoropleth(year, variable) {
         layer.bindPopup(`
         <strong>${county}</strong><br>
         ${variableNames[variable]}: ${value != null ? formatNumber(value) : "N/A"}
-    `);
+        `);
     });
+
+    // Update Catalunya (now also using color scale)
+    if(catalunyaLayer) {
+        catalunyaLayer.eachLayer(layer => {
+            const row = dataMap[year]["Catalunya"];
+            const value = row ? row[variable] : null;
+
+            layer.setStyle({
+                fillColor: scale(value),
+                fillOpacity: 1,
+                color: "#666",
+                weight: 2   // you can keep it thicker if you like
+            });
+
+            layer.bindPopup(`
+                <strong>Catalunya</strong><br>
+                ${variableNames[variable]}: ${value != null ? formatNumber(value) : "N/A"}
+            `);
+        });
+    }
 }
 
 // hook up year slider
@@ -547,6 +592,6 @@ yearSlider.addEventListener("input", () => {
     yearLabel.textContent = year;
 
     if(currentVariable) {
-        updateChoropleth(year, currentVariable);
+        updateChoropleth(year, currentVariable, currentMapType);  // <- pass type
     }
 });
