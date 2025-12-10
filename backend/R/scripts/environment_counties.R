@@ -1,12 +1,13 @@
 
-# package
+# packages ---------------------------------------------------------------------
 library(tidyverse)
+library(jsonlite)
 
 # counties belonging to Pyrenees region
 pyr <- c("Aran", "Alta Ribagorça", "Pallars Jussà", "Pallars Sobirà",
          "Alt Urgell", "Solsonès", "Cerdanya", "Ripollès", "Berguedà")
 
-# counteis belonging to Catalunya
+# counties belonging to Catalunya
 cat <- c("Alt Camp", "Alt Empordà", "Alt Penedès", "Alt Urgell", "Alta Ribagorça",
          "Anoia", "Aran", "Bages", "Baix Camp", "Baix Ebre", "Baix Empordà",
          "Baix Llobregat", "Baix Penedès", "Barcelonès", "Berguedà", "Cerdanya",
@@ -18,15 +19,16 @@ cat <- c("Alt Camp", "Alt Empordà", "Alt Penedès", "Alt Urgell", "Alta Ribagor
          "Vallès Occidental", "Vallès Oriental", "Lluçanès"
 )
 
-# path to environmental data
+# path to socio-economical data
 path <- "../../data/environmental"
 
 # function to read and process data
 source("R/process.R")
 
 
+
 # CLIMATE ----------------------------------------------------------------------
-preci <- process(
+preci <- process_map(
   folder = "climate/precipitation",
   skip = 8,
   n_max = Inf,
@@ -36,7 +38,7 @@ preci <- process(
   fun = mean
 )
 
-temp <- process(
+temp <- process_map(
   folder = "climate/temp",
   skip = 7,
   n_max = Inf,
@@ -47,11 +49,11 @@ temp <- process(
 )
 
 climate <- list(preci, temp) %>% 
-  reduce(full_join, by = c("region", "year"))
+  reduce(full_join, by = c("county", "year"))
 
 # WATER ------------------------------------------------------------------------
 path <- "../../data/socio-economical"
-density <- process(
+density <- process_map(
   folder = "population/density",
   skip = 7,
   n_max = Inf,
@@ -62,7 +64,7 @@ density <- process(
   mutate(p_density_hkm2 = p_population/area_km2)
 
 path <- "../../data/environmental"
-water <- process(
+water <- process_map(
   folder = "water/consump",
   skip = 9,
   n_max = Inf,
@@ -73,11 +75,11 @@ water <- process(
 )
 
 water <- list(water, density) %>% 
-  reduce(full_join, by = c("region", "year")) %>% 
+  reduce(full_join, by = c("county", "year")) %>% 
   mutate(across(starts_with("w_"), ~ (.x*1000) /p_population)) 
 
 # FOREST -----------------------------------------------------------------------
-clearing <- process(
+clearing <- process_map(
   folder = "forest/clearing",
   skip = 12,
   n_max = Inf,
@@ -86,7 +88,7 @@ clearing <- process(
   fun = sum
 )
 
-refor <- process(
+refor <- process_map(
   folder = "forest/reforestation",
   skip = 12,
   n_max = Inf,
@@ -96,11 +98,11 @@ refor <- process(
 )
 
 forest <- list(clearing, refor) %>% 
-  reduce(full_join, by = c("region", "year")) %>% 
+  reduce(full_join, by = c("county", "year")) %>% 
   mutate(f_relative_reforested = f_reforested_ha/f_cleared_ha * 100)
 
 # LANDUSE ----------------------------------------------------------------------
-land <- process(
+land <- process_map(
   folder = "land",
   skip = 9,
   n_max = Inf,
@@ -110,19 +112,19 @@ land <- process(
 )
 
 forest <- list(land, forest) %>% 
-  reduce(full_join, by = c("region", "year")) %>% 
+  reduce(full_join, by = c("county", "year")) %>% 
   mutate(across(c("f_reforested_ha", "f_cleared_ha"), ~ .x / l_forests * 100)) %>% 
   select(-starts_with("l_"))
 
 land <- list(land, density) %>% 
-  reduce(full_join, by = c("region", "year")) %>% 
+  reduce(full_join, by = c("county", "year")) %>% 
   mutate(across(starts_with("l_"), ~ .x /(area_km2*100) * 100)) 
 
 # bring all together
 environment <- list(climate, water, forest, land) %>% 
-  reduce(full_join, by = c("region", "year"))
+  reduce(full_join, by = c("county", "year"))
 
-write_json(environment, "C:/Users/Bianka/Documents/MSc-Internship/Observatory-of-the-Mountains/frontend/data/environment.json", append = FALSE)
+write_json(environment, "C:/Users/Bianka/Documents/MSc-Internship/Observatory-of-the-Mountains/frontend/data/environment_counties.json", append = FALSE)
 
 
 
