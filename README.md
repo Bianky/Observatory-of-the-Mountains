@@ -18,7 +18,9 @@ The suggested folder structure is as follows:
 │           └── process.R
 │       └── scripts
 │           └── socio-economy.R
+│           └── socio-economy_counties.R
 │           └── environment.R
+│           └── environment_counties.R
 │           └── geometry.R
 ├── docs
 │   └── *additional documents useful to the repository*
@@ -26,7 +28,9 @@ The suggested folder structure is as follows:
 │   ├── data_available.xlsx
 │   └── geometry.geojson
 │   └── socio-economy.json
+│   └── socio-economy_counties.json
 │   └── environment.json
+│   └── environment_counties.json
 │   └── metadata.txt
 └── README.md
 
