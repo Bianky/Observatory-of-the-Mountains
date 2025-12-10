@@ -124,6 +124,9 @@ land <- list(land, density) %>%
 environment <- list(climate, water, forest, land) %>% 
   reduce(full_join, by = c("county", "year"))
 
+environment <- environment %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
 write_json(environment, "C:/Users/Bianka/Documents/MSc-Internship/Observatory-of-the-Mountains/frontend/data/environment_counties.json", append = FALSE)
 
 
