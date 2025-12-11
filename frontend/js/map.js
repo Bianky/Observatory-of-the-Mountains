@@ -112,6 +112,9 @@ const categories_environment = {
         "l_crop_dry",
         "l_crop_irri",
         "l_urban"
+    ],
+    farm: [
+        "org_pct"
     ]
 };
 
@@ -196,7 +199,10 @@ const variableNames = {
     "l_novege": "No vegetation (%)",
     "l_crop_dry": "Dry crop land (%)",
     "l_crop_irri": "Irrigated crop land (%)",
-    "l_urban": "Urban area (%)"
+    "l_urban": "Urban area (%)",
+
+    // FARM
+    "org_pct": "Organic farms (%)"
 };
 
 
