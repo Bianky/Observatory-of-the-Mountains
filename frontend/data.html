@@ -7,15 +7,135 @@
   <title>Data</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class = "data-page">
+<body class="data-page">
   <header>
     <h1>Data</h1>
   </header>
 
   <main>
-    <section class = "Data">
-      <p> The data driving this maproom is sourced from <a href="https://web.gencat.cat/ca/inici"> Generalitat Catalunya </a>. 
-        The pre-processing steps and scripts can be found at the Github repository  <a href= "https://github.com/Bianky/Observatory-of-the-Mountains" > Observatory of the Mountains </a></p>
+    <section class="Data">
+      <p>
+        The data driving this maproom is sourced from 
+        <a href="https://web.gencat.cat/ca/inici">Generalitat Catalunya</a>. 
+        The pre-processing steps and scripts can be found at the GitHub repository 
+        <a href="https://github.com/Bianky/Observatory-of-the-Mountains">
+          Observatory of the Mountains
+        </a>.
+      </p>
+
+      <h2>Data overview</h2>
+
+      <table class="data-table">
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <!-- Socioeconomic -->
+    <tr>
+      <th colspan="2">SOCIOECONOMIC</th>
+    </tr>
+
+    <tr>
+      <td colspan="2"><strong>Population</strong></td>
+    </tr>
+    <tr><td>Population</td><td>Total population</td></tr>
+    <tr><td>Population density (h/km²)</td><td>Number of inhabitants per square kilometer</td></tr>
+    <tr><td>Men (%)</td><td>Percentage of men</td></tr>
+    <tr><td>Women (%)</td><td>Percentage of women</td></tr>
+    <tr><td>Age 0–24 (%)</td><td>Percentage of population aged 0–24</td></tr>
+    <tr><td>Age 25–64 (%)</td><td>Percentage of population aged 25–64</td></tr>
+    <tr><td>Age 65+ (%)</td><td>Percentage of population aged 65 and over</td></tr>
+    <tr><td>Population growth rate (‰)</td><td>Annual population growth rate (for Pyrenees and Catalunya it is the mean of population growth rate in respective counties)</td></tr>
+
+    <tr>
+      <td colspan="2"><strong>Economy</strong></td>
+    </tr>
+    <tr><td>GDP (per inhabitant €)</td><td>Gross Domestic Product per inhabitant</td></tr>
+    <tr><td>GVA Agriculture (per inhabitant €)</td><td>Gross Value Added from agriculture per inhabitant</td></tr>
+    <tr><td>GVA Industry (per inhabitant €)</td><td>Gross Value Added from industry per inhabitant</td></tr>
+    <tr><td>GVA Construction (per inhabitant €)</td><td>Gross Value Added from construction per inhabitant</td></tr>
+    <tr><td>GVA Services (per inhabitant €)</td><td>Gross Value Added from services per inhabitant</td></tr>
+    <tr><td>GDHI (thousand €)</td><td>Gross Disposable Household Income in thuosand euros</td></tr>
+    <tr><td>GDHI (per inhabitant €)</td><td>Gross Disposable Household Income per inhabitant</td></tr>
+    <tr><td>RIB (million €)</td><td>Real investment budget in million euros</td></tr>
+    <tr><td>RIB (per county, million €)</td><td>Real investment budget per county</td></tr>
+    <tr><td>RIB (per inhabitant €)</td><td>Real investment budget per inhabitant</td></tr>
+
+    <tr>
+      <td colspan="2"><strong>Work</strong></td>
+    </tr>
+    <tr><td>Unemployment (%)</td><td>Percentage of population that is unemployed</td></tr>
+    <tr><td>Unemployment of men (%)</td><td>Percentage of men that is unemployed</td></tr>
+    <tr><td>Unemployment of women (%)</td><td>Percentage of women that is unemployed</td></tr>
+    <tr><td>Active population (%)</td><td>Percentage of economically active population</td></tr>
+    <tr><td>Active population of men (%)</td><td>Percentage of economically active men</td></tr>
+    <tr><td>Active population of women (%)</td><td>Percentage of economically active women</td></tr>
+    <tr><td>Inactive population (%)</td><td>Percentage of economically inactive population</td></tr>
+    <tr><td>Inactive population of men (%)</td><td>Percentage of economically inactive men</td></tr>
+    <tr><td>Inactive population of women (%)</td><td>Percentage of economically inactive women</td></tr>
+
+    <tr>
+      <td colspan="2"><strong>Engagement</strong></td>
+    </tr>
+    <tr><td>Foundations</td><td>Number of registered foundations</td></tr>
+    <tr><td>Associations</td><td>Number of registered associations</td></tr>
+
+    <!-- Environmental -->
+
+    <tr class="spacer-row">
+      <td colspan="2">&nbsp;</td>
+    </tr>
+
+    <tr>
+      <th colspan="2">ENVIRONMENTAL</th>
+    </tr>
+
+    <tr>
+      <td colspan="2"><strong>Climate</strong></td>
+    </tr>
+    <tr><td>Precipitation (mm)</td><td>Annual precipitation</td></tr>
+    <tr><td>Wind speed (m/s)</td><td>Mean wind speed</td></tr>
+    <tr><td>Mean temperature (°C)</td><td>Mean annual temperature</td></tr>
+    <tr><td>Mean max temperature (°C)</td><td>Mean annual maximum temperature</td></tr>
+    <tr><td>Mean min temperature (°C)</td><td>Mean annual minimum temperature</td></tr>
+
+    <tr>
+      <td colspan="2"><strong>Water</strong></td>
+    </tr>
+    <tr><td>Domestic water consumption (m³/inhabitant)</td><td>Domestic water use per inhabitant</td></tr>
+    <tr><td>Industry water consumption (m³/inhabitant)</td><td>Industrial water use per inhabitant</td></tr>
+    <tr><td>Total network water consumption (m³/inhabitant)</td><td>Total water use from network</td></tr>
+    <tr><td>Own water sources (m³/inhabitant)</td><td>Water from own sources</td></tr>
+    <tr><td>Total water consumption (m³/inhabitant)</td><td>Total water consumption per inhabitant</td></tr>
+
+    <tr>
+      <td colspan="2"><strong>Forest</strong></td>
+    </tr>
+    <tr><td>Cleared forest (%)</td><td>Percentage of cleared forest area</td></tr>
+    <tr><td>Reforested area (%)</td><td>Percentage of reforested area</td></tr>
+    <tr><td>Relative reforested area (%)</td><td>Relative measure of reforestation (reforested area divided by cleared forest area)</td></tr>
+
+    <tr>
+      <td colspan="2"><strong>Land</strong></td>
+    </tr>
+    <tr><td>Forest area (%)</td><td>Percentage of forest cover</td></tr>
+    <tr><td>Bushes area (%)</td><td>Percentage of shrubland</td></tr>
+    <tr><td>Other land area (%)</td><td>Percentage of other land uses</td></tr>
+    <tr><td>No vegetation (%)</td><td>Percentage of non-vegetated land</td></tr>
+    <tr><td>Dry crop land (%)</td><td>Percentage of dry cropland</td></tr>
+    <tr><td>Irrigated crop land (%)</td><td>Percentage of irrigated cropland</td></tr>
+    <tr><td>Urban area (%)</td><td>Percentage of urban area</td></tr>
+
+    <tr>
+      <td colspan="2"><strong>Farm</strong></td>
+    </tr>
+    <tr><td>Organic farms (%)</td><td>Percentage of organic farms out of </td></tr>
+  </tbody>
+</table>
     </section>
   </main>
 

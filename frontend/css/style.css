@@ -183,3 +183,13 @@ body {
     float: left;
     margin-right: 6px;
 }
+
+.data-table {
+  border-collapse: collapse; /* keeps borders clean */
+}
+
+.data-table th,
+.data-table td {
+  padding: 3px 32px;  /* ↑ vertical | ↑ horizontal spacing */
+  text-align: left;
+}

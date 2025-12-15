@@ -30,6 +30,8 @@ const categories_socioeconomy = {
     population: [
         "p_population",
         "p_density_hkm2",
+        "p_men_pct",
+        "p_women_pct",
         "p_0_24_pct",
         "p_25_64_pct",
         "p_65imes_pct",
@@ -76,9 +78,10 @@ const categories_socioeconomy = {
         "w_active",
         "w_active_men",
         "w_active_women",
+        "w_inactive",
         "w_inactive_men",
-        "w_inactive_women",
-        "w_inactive"
+        "w_inactive_women"
+
     ],
 
     education: [
@@ -134,6 +137,8 @@ const variableNames = {
     // POPULATION
     "p_population": "Population",
     "p_density_hkm2": "Population density (h/km²)",
+    "p_men_pct": "Men (%)",
+    "p_women_pct": "Women (%)",
     "p_0_24_pct": "Age 0–24 (%)",
     "p_25_64_pct": "Age 25–64 (%)",
     "p_65imes_pct": "Age 65+ (%)",
@@ -171,7 +176,7 @@ const variableNames = {
     "e_pit_tasablebase_percontributor": "Personal income tax (€)",
     "e_ret_taxable_base": "Rural Estate tax (thousand €)",
     "e_uet_taxable_base": "Urban Estate tax (thuosand €)",
-    
+
 
     // WORK
     "w_unemp": "Unemployment (%)",
