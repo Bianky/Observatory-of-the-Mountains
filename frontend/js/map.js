@@ -171,6 +171,7 @@ const variableNames = {
     "e_pit_tasablebase_percontributor": "Personal income tax (€)",
     "e_ret_taxable_base": "Rural Estate tax (thousand €)",
     "e_uet_taxable_base": "Urban Estate tax (thuosand €)",
+    
 
     // WORK
     "w_unemp": "Unemployment (%)",
