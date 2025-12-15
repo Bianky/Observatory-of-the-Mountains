@@ -62,7 +62,11 @@ const categories_socioeconomy = {
         
         "e_rib",
         "e_rib_pc",
-        "e_rib_pi"
+        "e_rib_pi",
+
+        "e_pit_tasablebase_percontributor",
+        "e_ret_taxable_base",
+        "e_uet_taxable_base"
     ],
 
     work: [
@@ -75,6 +79,14 @@ const categories_socioeconomy = {
         "w_inactive_men",
         "w_inactive_women",
         "w_inactive"
+    ],
+
+    education: [
+        "edu_illiterate_pct", 
+        "edu_primary_pct", 
+        "edu_secondary_pct", 
+        "edu_university_pct"
+
     ],
 
     engagement: [
@@ -156,6 +168,10 @@ const variableNames = {
     "e_rib_pc": "RIB (per county in million €)",
     "e_rib_pi": "RIB (per inhabitant in €)",
 
+    "e_pit_tasablebase_percontributor": "Personal income tax (€)",
+    "e_ret_taxable_base": "Rural Estate tax (thousand €)",
+    "e_uet_taxable_base": "Urban Estate tax (thuosand €)",
+
     // WORK
     "w_unemp": "Unemployment (%)",
     "w_unemp_men": "Unemployment of men(%)",
@@ -166,6 +182,12 @@ const variableNames = {
     "w_inactive": "Inactive population (%)",
     "w_inactive_men": "Inactive population of men (%)",
     "w_inactive_women": "Inactive population of women (%)",
+
+    //EDUCAION
+    "edu_illiterate_pct": "Illiterate (%)", 
+    "edu_primary_pct": "Primary education (%)",
+    "edu_secondary_pct": "Secondary education (%)", 
+    "edu_university_pct": "University education (%)",
 
     // ENGAGEMENT
     "eng_found": "Foundations",
