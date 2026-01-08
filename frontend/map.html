@@ -1,0 +1,71 @@
+<!-- frontend/map.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map</title>
+
+    <!-- style sheets -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body class="map-page">
+
+
+
+
+    <div class="page-wrapper">
+        <div id="sidebar">
+            <ul id="tabs"></ul>
+            <ul id="categories-container"  style="cursor: pointer;"></ul>
+            <div id="chart-container">
+                <canvas id="variableChart" style="cursor: pointer;"></canvas>
+            </div>
+        </div>
+
+
+        <div class="content">
+            <div id="map"></div>
+
+        <div id="year-slider-container" style="margin: 10px 0; width: 100%; cursor: pointer;">
+        <input 
+            type="range" 
+            id="year-slider" 
+            min="2015" 
+            max="2025" 
+            step="1" 
+            value="2020"
+            style="width: 100%;"
+        
+        >
+        <span id="year-label">2020</span>
+        </div>
+
+        </div>
+
+        <div class="footer">
+        © 2025  &nbsp;  Centre de Recerca Ecològica i Aplicacions Forestals  &nbsp; <!-- <a href="https://www.creaf.cat/en"> (CREAF)  </a> -->
+        </div>
+
+    </div>
+
+    
+     
+
+    <!-- javascript -->
+    <script src="js/map.js"></script>
+
+</body>

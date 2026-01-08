@@ -17,8 +17,8 @@ let regionLayer;
 let countyLayer;
 
 // paths to data
-const geometry = "./data/geometry.geojson";
-const geometry_counties = "./data/geometry_counties_cat.geojson";
+const geometry = "./data/geometry_regions.geojson";
+const geometry_counties = "./data/geometry_counties.geojson";
 
 const socioeconomy = "./data/socio-economy.json";
 const socioeconomy_counties = "./data/socio-economy_counties.json";
@@ -253,7 +253,7 @@ function createMap() {
         return;
     }
 
-    map = L.map('map').setView([41.6, 1.9], 7);
+    map = L.map('map').setView([41.6, 1.9], 8);
 
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
@@ -426,6 +426,9 @@ function showCategory(type) {
                     currentMapType = (type === "socio-chart") ? "socio" : "env";  // <- store type
                     buildLineChart(v, data);
                     updateChoropleth(document.getElementById("year-slider").value, v, currentMapType);
+
+                    container.querySelectorAll("li").forEach(i => i.classList.remove("active"));
+                    li.classList.add("active");
                 });
 
                 ul.appendChild(li);  // <- must be inside the forEach
@@ -487,9 +490,10 @@ function buildLineChart(variable, dataset) {
                 }
             },
             scales: {
-                x: { title: { display: true, text: "Year" } },
+                x: { title: { display: true, text: "Year", font: {size: 17, weight: 'bold', family: "monospace" } } },
                 y: { 
-                    title: { display: true, text: variableNames[variable] || variable },
+                    title: { display: true, text: variableNames[variable], font: {size: 17, weight: 'bold', family: "monospace" }  || variable },
+
                     ticks: {
                         callback: function(value) {
                             return formatNumber(value);

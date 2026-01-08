@@ -22,6 +22,7 @@
     <section class="hero">
         <a href="about.html" class="about-btn">About</a>
         <a href="data.html" class="data-btn">Data</a>
+        <a href="map.html" class="map-btn">Map</a>
         <div class="hero-text">
             Observatory of the Mountains
         </div>
@@ -29,67 +30,7 @@
 
     
 
-    <div class="page-wrapper">
-        
-        <!-- <div class="header">
-            Observatory of the Mountains
-        </div> -->
-
-        <div id="sidebar">
-            <ul id="tabs"></ul>
-            <ul id="categories-container"></ul>
-            <div id="chart-container">
-                <canvas id="variableChart"></canvas>
-            </div>
-        </div>
-
-
-        <div class="content">
-            <div id="map"></div>
-
-        <div id="year-slider-container" style="margin: 10px 0; width: 100%;">
-        <input 
-            type="range" 
-            id="year-slider" 
-            min="2015" 
-            max="2025" 
-            step="1" 
-            value="2020"
-            style="width: 100%;"
-        
-        >
-        <span id="year-label">2020</span>
-        </div>
-        </div>
-         
-
-        <div class="footer">
-        © 2025  &nbsp;  Centre de Recerca Ecològica i Aplicacions Forestals  &nbsp; <!-- <a href="https://www.creaf.cat/en"> (CREAF)  </a> -->
-
-            <!-- <div class="logo">
-                <img src="https://www.creaf.cat/sites/default/files/2024-10/CREAF-SO-logo-ESP.png" >
-            </div> -->
-        </div>
-
-    </div>
-
-    <!-- javascript -->
-    <script src="js/map.js"></script>
-
-    <script>
-    window.addEventListener('scroll', () => {
-        const hero = document.querySelector('.hero');
-        const dashboard = document.querySelector('.page-wrapper');
-
-        if (window.scrollY > 50) {  // adjust threshold
-            dashboard.classList.add('visible');  // show dashboard
-            //hero.classList.add('fade-out');      // fade hero
-        } else {
-            dashboard.classList.remove('visible');
-            //hero.classList.remove('fade-out');
-        }
-    });
-    </script>
+ 
 
 </body>
 </html>
