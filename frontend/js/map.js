@@ -37,7 +37,13 @@ const categories_socioeconomy = {
         "p_65imes_pct",
         "p_growthrate"
     ],
-    economy: [
+
+    housing: [
+        "h_value_new",
+        "h_value_old"
+    ],
+
+    "income and work": [
         //"e_GDP_mileur",
         //"e_GDP_mileur_pc",
         "e_GDP_pi",
@@ -68,10 +74,8 @@ const categories_socioeconomy = {
 
         "e_pit_tasablebase_percontributor",
         "e_ret_taxable_base",
-        "e_uet_taxable_base"
-    ],
+        "e_uet_taxable_base",
 
-    work: [
         "w_unemp",
         "w_unemp_men",
         "w_unemp_women",
@@ -92,45 +96,48 @@ const categories_socioeconomy = {
 
     ],
 
-    engagement: [
-        "eng_found",
-        "eng_assoc",
-    ]
+    //engagement: [
+   //     "eng_found",
+  //      "eng_assoc",
+  // ]
 };
 
 const categories_environment = {
-    climate: [
+    "climate change": [
         "c_preci_mm",
         "c_wspeed_ms",
         "c_temp_ave",
         "c_temp_avemax",
         "c_temp_avemin"
     ],
-    water: [
+    "withdrawals": [
         "w_domestic_consump",
         "w_industry_consump",
         "w_total_network",
         "w_own_sources",
         "w_total"
     ],
-    forest: [
+    "biodiversity loss": [
         "f_cleared_ha",
         "f_reforested_ha",
         "f_relative_reforested"
 
     ],
-    land: [
+    "land conversion": [
         "l_forests",
         "l_bushes",
         "l_others",
         "l_novege",
         "l_crop_dry",
         "l_crop_irri",
-        "l_urban"
-    ],
-    farm: [
+        "l_urban",
         "org_pct"
-    ]
+    ],
+    pollution: [
+    "w_mun",
+    "w_ind"
+]
+
 };
 
 const variableNames = {
@@ -143,6 +150,9 @@ const variableNames = {
     "p_25_64_pct": "Age 25–64 (%)",
     "p_65imes_pct": "Age 65+ (%)",
     "p_growthrate": "Population growth rate (‰)",
+
+    "h_value_new": "Average price of newly-built housing (€/m² built)",
+    "h_value_old": "Average price of second-hand housing (€/m² built)",
 
     // ECONOMY
     //"e_GDP_mileur": "GDP (million €)",
@@ -175,13 +185,13 @@ const variableNames = {
 
     "e_pit_tasablebase_percontributor": "Personal income tax (€)",
     "e_ret_taxable_base": "Rural Estate tax (thousand €)",
-    "e_uet_taxable_base": "Urban Estate tax (thuosand €)",
+    "e_uet_taxable_base": "Urban Estate tax (thousand €)",
 
 
     // WORK
     "w_unemp": "Unemployment (%)",
-    "w_unemp_men": "Unemployment of men(%)",
-    "w_unemp_women": "Unemployment of women(%)",
+    "w_unemp_men": "Unemployment of men (%)",
+    "w_unemp_women": "Unemployment of women (%)",
     "w_active": "Active population (%)",
     "w_active_men": "Active population of men (%)",
     "w_active_women": "Active population of women (%)",
@@ -196,8 +206,8 @@ const variableNames = {
     "edu_university_pct": "University education (%)",
 
     // ENGAGEMENT
-    "eng_found": "Foundations",
-    "eng_assoc": "Associations",
+   // "eng_found": "Foundations",
+   // "eng_assoc": "Associations",
 
     // CLIMATE
     "c_preci_mm": "Precipitation (mm)",
@@ -230,7 +240,10 @@ const variableNames = {
     "l_urban": "Urban area (%)",
 
     // FARM
-    "org_pct": "Organic farms (%)"
+    "org_pct": "Organic farms (%)",
+
+    "w_mun": "Municipal waste (kg/per inhabitant)",
+    "w_ind": "Industrial waste (kg/per inhabitant)"
 };
 
 
@@ -368,8 +381,8 @@ function populateSidebarTabs() {
 
     // create tab buttons
     tabs.innerHTML = `
-        <button id="tab-socio" class="tab-btn active">Socioeconomy</button>
-        <button id="tab-env" class="tab-btn">Environment</button>
+        <button id="tab-socio" class="tab-btn active">Social foundation</button>
+        <button id="tab-env" class="tab-btn">Ecological ceiling</button>
     `;
 
     const tabSocio = document.getElementById("tab-socio");

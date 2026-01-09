@@ -235,7 +235,13 @@ body, html {
 
 .data-table th,
 .data-table td {
-  padding: 3px 32px;  /* ↑ vertical | ↑ horizontal spacing */
+  padding: 8px 32px;  /* ↑ vertical | ↑ horizontal spacing */
   text-align: left;
+
+
+}
+
+.data-table td:nth-child(2) {
+  font-style: italic;
 }
 
