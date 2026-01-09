@@ -70,11 +70,19 @@ gr <- read_csv(file.path(path, "population/growth rate/pop_growth_rate.csv"), sk
   rename(county = ...1) %>% 
   mutate(across(where(function(x) all(x %in% c(NA, ".", "-") | grepl("^[0-9.-]+$", x))), as.numeric))
 
-gr <- gr %>% 
-  filter(county %in% pyr) %>% 
+gr_pyr <- gr %>% 
+  filter(county %in% pyr) 
+
+gr_cat <- gr %>% 
+  filter(county == "Catalunya") %>% 
+  select(-county) %>% 
+  mutate(county = "Catalunya")
+
+gr <- bind_rows(gr_pyr, gr_cat) %>% 
   pivot_longer(cols = 2:26, names_to = "year", values_to = "p_growthrate") %>% 
   mutate(year = as.numeric(year)) %>% 
-  filter(year > 2014)
+  filter(year > 2014) 
+
 
 population <- list(density, age, gr, men, women) %>% 
   reduce(full_join, by = c("county", "year"))
@@ -112,13 +120,46 @@ rib <- read_csv(file.path(path, "economy/rib/real_investment_budget.csv"), skip 
   rename(county = ...1) %>% 
   mutate(across(where(function(x) all(x %in% c(NA, ".", "-") | grepl("^[0-9.-]+$", x))), as.numeric))
 
-rib <- rib %>% 
-  filter(county %in% pyr) %>% 
+rib_pyr <- rib %>% 
+  filter(county %in% pyr) 
+
+rib_cat <- rib %>% 
+  filter(county == "Catalunya")
+
+rib <- bind_rows(rib_pyr, rib_cat) %>% 
   pivot_longer(cols = 2:23, names_to = "year", values_to = "e_rib") %>% 
   mutate(year = as.numeric(year)) %>% 
   filter(year > 2014) 
 
-economy <- list(gdp, gva, gdhi, rib) %>% 
+pit <- process_map(
+  folder = "economy/personal income tax",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "e_pit_tasablebase_percontributor", "e_pit_resulting_quota"),
+  drop_cols = c(),
+  fun = mean
+)
+
+ret <- process_map(
+  folder = "economy/rural estate tax",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "e_ret_receipts_n", "e_ret_taxable_base", "e_ret_full_fee"),
+  drop_cols = c(),
+  fun = mean
+)
+
+uet <- process_map(
+  folder = "economy/urban estate tax",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "e_uet_receipts_n", "e_uet_taxable_base", "e_uet_full_fee"),
+  drop_cols = c(),
+  fun = mean
+)
+
+
+economy <- list(gdp, gva, gdhi, rib, pit, ret, uet) %>% 
   reduce(full_join, by = c("county", "year"))
 
 # WORK -------------------------------------------------------------------------
@@ -210,6 +251,29 @@ unemp_women <- process_map(
 work <- list(active, active_men, active_women, inactive, inactive_men, inactive_women, unemp, unemp_men, unemp_women) %>% 
   reduce(full_join, by = c("county", "year"))
 
+# EDUCATION --------------------------------------------------------------------
+# 15 and higher
+edu <- process_map(
+  folder = "education",
+  skip = 7,
+  n_max = Inf,
+  col_names = c("county", "edu_illeterate", "partial_primary", "edu_primary", "1_stage_secondary", "edu_2_stage_secondary_go", 
+                "edu_2_stage_secondary_so", "higher-level", "edu_university_bach", "edu_university_bac_240c", "edu_university_mas", 
+                "edu_university_doc", "total"),
+  drop_cols = c("partial_primary","1_stage_secondary","higher-level"),
+  fun = sum 
+)
+
+education <- edu %>% 
+  mutate(edu_secondary = `edu_2_stage_secondary_go` + `edu_2_stage_secondary_so`,
+         edu_university = edu_university_bach + edu_university_bac_240c + edu_university_mas + edu_university_doc) %>% 
+  mutate(edu_illiterate_pct = round(edu_illeterate/total*100, 2),
+         edu_primary_pct = round(edu_primary/total*100, 2),
+         edu_secondary_pct = round(edu_secondary/total*100, 2),
+         edu_university_pct = round(edu_university/total*100, 2)) %>% 
+  select(county, year, edu_illiterate_pct, edu_primary_pct, edu_secondary_pct, edu_university_pct)
+
+
 # ENGAGEMENT -------------------------------------------------------------------
 
 assoc <- process_map(
@@ -235,9 +299,10 @@ engagement <- list(assoc, found)%>%
 
 
 # bring all together
-socioeconomy_counties <- list(population, economy, work, engagement) %>% 
+socioeconomy_counties <- list(population, economy, work, education, engagement) %>% 
   reduce(full_join, by = c("county", "year")) %>% 
-  mutate(
+  mutate(p_men_pct = p_men/p_population*100,
+         p_women_pct = p_women/p_population*100,
          e_GDP_pi              = round(e_GDP_mileur / p_population * 1e6, 2),
          e_gva_agri_pi         = round(e_gva_agri / p_population * 1e6, 2),
          e_gva_industry_pi     = round(e_gva_industry / p_population * 1e6, 2),
@@ -256,6 +321,10 @@ socioeconomy_counties <- list(population, economy, work, engagement) %>%
          w_unemp_women          = round(w_unemp_women / p_women * 100, 2),
          e_rib_pi               = round(e_rib/p_population*1000000, 2),
          e_rib_pc               = e_rib)
+
+socioeconomy_counties <- socioeconomy_counties %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
 
 write_json(socioeconomy_counties, "C:/Users/Bianka/Documents/MSc-Internship/Observatory-of-the-Mountains/frontend/data/socio-economy_counties.json", append = FALSE)
 
