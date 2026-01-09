@@ -90,6 +90,30 @@ gr <- bind_rows(gr_pyr, gr_cat) %>%
 population <- list(density, age, gr, men, women) %>% 
   reduce(full_join, by = c("region", "year"))
 
+# HOUSING ----------------------------------------------------------------------
+
+old <- process(
+  folder = "housing/old",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "h_value_old", "h_variation"),
+  drop_cols = c("h_variation"),
+  fun = mean
+)
+
+new <- process(
+  folder = "housing/new",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "h_value_new", "h_variation"),
+  drop_cols = c("h_variation"),
+  fun = mean
+)
+
+housing <- list(old, new) %>% 
+  reduce(full_join, by = c("region", "year"))
+
+
 # ECONOMY ----------------------------------------------------------------------
 
 gdp <- process(
@@ -138,8 +162,37 @@ rib <- bind_rows(rib_pyr, rib_cat) %>%
   mutate(year = as.numeric(year)) %>% 
   filter(year > 2014) 
 
-economy <- list(gdp, gva, gdhi, rib) %>% 
+pit <- process(
+  folder = "economy/personal income tax",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "e_pit_tasablebase_percontributor", "e_pit_resulting_quota"),
+  drop_cols = c(),
+  fun = mean
+)
+
+ret <- process(
+  folder = "economy/rural estate tax",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "e_ret_receipts_n", "e_ret_taxable_base", "e_ret_full_fee"),
+  drop_cols = c(),
+  fun = mean
+)
+
+uet <- process(
+  folder = "economy/urban estate tax",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "e_uet_receipts_n", "e_uet_taxable_base", "e_uet_full_fee"),
+  drop_cols = c(),
+  fun = mean
+)
+
+economy <- list(gdp, gva, gdhi, rib, pit, ret, uet) %>% 
   reduce(full_join, by = c("region", "year"))
+
+
 
 # WORK -------------------------------------------------------------------------
 
@@ -230,6 +283,30 @@ unemp_women <- process(
 work <- list(active, active_men, active_women, inactive, inactive_men, inactive_women, unemp, unemp_men, unemp_women) %>% 
   reduce(full_join, by = c("region", "year"))
 
+
+# EDUCATION --------------------------------------------------------------------
+# 15 and higher
+edu <- process(
+  folder = "education",
+  skip = 7,
+  n_max = Inf,
+  col_names = c("county", "edu_illeterate", "partial_primary", "edu_primary", "1_stage_secondary", "edu_2_stage_secondary_go", 
+                "edu_2_stage_secondary_so", "higher-level", "edu_university_bach", "edu_university_bac_240c", "edu_university_mas", 
+                "edu_university_doc", "total"),
+  drop_cols = c("partial_primary","1_stage_secondary","higher-level"),
+  fun = sum 
+)
+
+education <- edu %>% 
+  mutate(edu_secondary = `edu_2_stage_secondary_go` + `edu_2_stage_secondary_so`,
+         edu_university = edu_university_bach + edu_university_bac_240c + edu_university_mas + edu_university_doc) %>% 
+  mutate(edu_illiterate_pct = round(edu_illeterate/total*100, 2),
+         edu_primary_pct = round(edu_primary/total*100, 2),
+         edu_secondary_pct = round(edu_secondary/total*100, 2),
+         edu_university_pct = round(edu_university/total*100, 2)) %>% 
+  select(region, year, edu_illiterate_pct, edu_primary_pct, edu_secondary_pct, edu_university_pct)
+
+
 # ENGAGEMENT -------------------------------------------------------------------
 
 assoc <- process(
@@ -255,9 +332,11 @@ engagement <- list(assoc, found)%>%
 
 
 # bring all together
-socioeconomy <- list(population, economy, work, engagement) %>% 
+socioeconomy <- list(population, economy, work, education, engagement, housing) %>% 
   reduce(full_join, by = c("region", "year")) %>% 
-  mutate(e_GDP_pc               = round(if_else(region == "Pyrenees", e_GDP_mileur / 9,  e_GDP_mileur / 43) * 1e6, 2),
+  mutate(p_men_pct = p_men/p_population*100,
+         p_women_pct = p_women/p_population*100,
+         e_GDP_pc               = round(if_else(region == "Pyrenees", e_GDP_mileur / 9,  e_GDP_mileur / 43) * 1e6, 2),
          e_GDP_pi               = round(e_GDP_mileur / p_population * 1e6, 2),
            
          e_gva_agri_pc          = round(if_else(region == "Pyrenees", e_gva_agri / 9,  e_gva_agri / 43) * 1e6, 2),
@@ -289,5 +368,8 @@ socioeconomy <- list(population, economy, work, engagement) %>%
          eng_found_pc           = if_else(`region` == "Pyrenees", eng_found/9, eng_found/43),
          eng_assoc_pc           = if_else(`region` == "Pyrenees", eng_assoc/9, eng_assoc/43)
          )
+
+socioeconomy <- socioeconomy %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
 
 write_json(socioeconomy, "C:/Users/Bianka/Documents/MSc-Internship/Observatory-of-the-Mountains/frontend/data/socio-economy.json", append = FALSE)

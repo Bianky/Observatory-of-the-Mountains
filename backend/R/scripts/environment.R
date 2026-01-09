@@ -1,6 +1,7 @@
 
 # package
 library(tidyverse)
+library(jsonlite)
 
 # counties belonging to Pyrenees region
 pyr <- c("Aran", "Alta Ribagorça", "Pallars Jussà", "Pallars Sobirà",
@@ -118,8 +119,84 @@ land <- list(land, density) %>%
   reduce(full_join, by = c("region", "year")) %>% 
   mutate(across(starts_with("l_"), ~ .x /(area_km2*100) * 100)) 
 
+
+#pollution 
+mun <- process(
+  folder = "waste/municipal",
+  skip = 8,
+  n_max = Inf,
+  col_names = c("county", "glass", "papre", "lightweight", "organic", "pruning", "heavy_waste", "others", "w_mun"),
+  drop_cols = c(2:8),
+  fun = sum
+)
+
+ind <- process(
+  folder = "waste/industrial",
+  skip = 10,
+  n_max = Inf,
+  col_names = c("county", "esta", "speacial", "not_special", "w_ind"),
+  drop_cols = c(2:4),
+  fun = sum
+)
+
+waste <- list(mun, ind, density) %>% 
+  reduce(full_join, by = c("region", "year")) %>% 
+  mutate(w_mun = w_mun/p_population * 1000,
+         w_ind = w_ind/p_population * 1000)
+
+
+# FARM -------------------------------------------------------------------------
+
+organic <- read_csv(file.path(path, "farm/organic_2020.csv"), 
+                    skip = 7,
+                    col_names = c("county", "fo_cereals for grain", "fo_legumes", "fo_roots and tubers", 
+                                  "fo_crops harvested green", "fo_industrial crops", 
+                                  "fo_vegetables, melongs and strawberries", "fo_seeds and seedlings for sale", 
+                                  "fo_other herbaceous crops", "fo_outdoor woody crops", 
+                                  "fo_permanent pasture lands", "fo_greenhouse crops", "fo_total_organic")) %>% 
+  mutate(across(where(function(x) all(x %in% c(NA, ".", "-") | grepl("^[0-9.-]+$", x))), as.numeric))
+
+org_pyr <- organic %>% 
+  filter(county %in% pyr) %>% 
+  summarise(across(where(is.numeric), sum)) %>% 
+  mutate(region = "Pyrenees")
+
+org_cat <- organic %>% 
+  filter(county %in% cat) %>% 
+  summarise(across(where(is.numeric), sum)) %>% 
+  mutate(region = "Catalunya")
+
+org <- bind_rows(org_pyr, org_cat) %>% 
+  mutate(year = 2020)
+
+total <- read_csv(file.path(path, "farm/total_2020.csv"), 
+                  skip = 7,
+                  col_names = c("county", "ft_greenhouse_crops", "ft_outdoor_herbaceous_crops", "ft_fallows", 
+                                "ft_woody_crops", "ft_vegetable_gardens_for_own_consumption", "ft_total_cultivated_land", 
+                                "ft_permanent_pastures", "ft_total_utilized_agricultural_area", "ft_forest_area", 
+                                "ft_threshing,_floors,_buildings,_quarries,_courtyards,..", 
+                                "ft_abandoned_agricultural_area", "ft_total")) %>% 
+  mutate(across(where(function(x) all(x %in% c(NA, ".", "-") | grepl("^[0-9.-]+$", x))), as.numeric))
+
+tot_pyr <- total %>% 
+  filter(county %in% pyr) %>% 
+  summarise(across(where(is.numeric), sum)) %>% 
+  mutate(region = "Pyrenees")
+
+tot_cat <- total %>% 
+  filter(county %in% cat) %>% 
+  summarise(across(where(is.numeric), sum)) %>% 
+  mutate(region = "Catalunya")
+
+tot <- bind_rows(tot_pyr, tot_cat) %>% 
+  mutate(year = 2020)
+
+farm <- list (org, tot) %>% 
+  reduce(full_join, by = c("region", "year")) %>% 
+  mutate(org_pct = fo_total_organic/ft_total_utilized_agricultural_area * 100)
+
 # bring all together
-environment <- list(climate, water, forest, land) %>% 
+environment <- list(climate, water, forest, land, farm, waste) %>% 
   reduce(full_join, by = c("region", "year"))
 
 write_json(environment, "C:/Users/Bianka/Documents/MSc-Internship/Observatory-of-the-Mountains/frontend/data/environment.json", append = FALSE)

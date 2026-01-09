@@ -627,7 +627,7 @@ function updateChoropleth(year, variable, type = "socio") {
             });
 
             layer.bindPopup(`
-                <strong>Catalunya</strong><br>
+                <strong>Non Pyrenees Catalunya</strong><br>
                 ${variableNames[variable]}: ${value != null ? formatNumber(value) : "N/A"}
             `);
         });
