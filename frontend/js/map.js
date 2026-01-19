@@ -72,7 +72,7 @@ const categories_socioeconomy = {
         "e_rib_pc",
         "e_rib_pi",
 
-        "e_pit_tasablebase_percontributor",
+        "e_pit_taxablebase_percontributor",
         "e_ret_taxable_base",
         "e_uet_taxable_base",
 
@@ -96,10 +96,10 @@ const categories_socioeconomy = {
 
     ],
 
-    //engagement: [
-   //     "eng_found",
-  //      "eng_assoc",
-  // ]
+    engagement: [
+        "eng_found",
+      "eng_assoc"
+   ]
 };
 
 const categories_environment = {
@@ -120,7 +120,8 @@ const categories_environment = {
     "biodiversity loss": [
         "f_cleared_ha",
         "f_reforested_ha",
-        "f_relative_reforested"
+        "f_relative_reforested", 
+        "f_fire"
 
     ],
     "land conversion": [
@@ -128,10 +129,10 @@ const categories_environment = {
         "l_bushes",
         "l_others",
         "l_novege",
-        "l_crop_dry",
-        "l_crop_irri",
+        "l_agri",
         "l_urban",
-        "org_pct"
+        "org_pct",
+        "lc_sum"
     ],
     pollution: [
     "w_mun",
@@ -183,7 +184,7 @@ const variableNames = {
     "e_rib_pc": "RIB (per county in million €)",
     "e_rib_pi": "RIB (per inhabitant in €)",
 
-    "e_pit_tasablebase_percontributor": "Personal income tax (€)",
+    "e_pit_taxablebase_percontributor": "Personal income tax (€)",
     "e_ret_taxable_base": "Rural Estate tax (thousand €)",
     "e_uet_taxable_base": "Urban Estate tax (thousand €)",
 
@@ -206,8 +207,8 @@ const variableNames = {
     "edu_university_pct": "University education (%)",
 
     // ENGAGEMENT
-   // "eng_found": "Foundations",
-   // "eng_assoc": "Associations",
+    "eng_found": "Foundations",
+   "eng_assoc": "Associations",
 
     // CLIMATE
     "c_preci_mm": "Precipitation (mm)",
@@ -228,6 +229,7 @@ const variableNames = {
     "f_cleared_ha": "Cleared forest (%)",
     "f_reforested_ha": "Reforested area (%)",
     "f_relative_reforested": "Relative reforested area",
+    "f_fire": "Forest fire (%)",
 
 
     // LAND
@@ -235,9 +237,9 @@ const variableNames = {
     "l_bushes": "Bushes area (%)",
     "l_others": "Other land area (%)",
     "l_novege": "No vegetation (%)",
-    "l_crop_dry": "Dry crop land (%)",
-    "l_crop_irri": "Irrigated crop land (%)",
+    "l_agri": "Crop land (%)",
     "l_urban": "Urban area (%)",
+    "lc_sum": "Land conversion (%)",
 
     // FARM
     "org_pct": "Organic farms (%)",
