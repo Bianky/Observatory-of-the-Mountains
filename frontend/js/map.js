@@ -110,7 +110,7 @@ const categories_environment = {
         "c_temp_avemax",
         "c_temp_avemin"
     ],
-    "withdrawals": [
+    "freshwater withdrawals": [
         "w_domestic_consump",
         "w_industry_consump",
         "w_total_network",
@@ -578,7 +578,7 @@ legend.update = function (min = 0, max = 1, scale = () => "#ccc") {
     range.forEach(v => {
         this._div.innerHTML += `
             <i style="background:${scale(v)}"></i>
-            ${formatNumber(v.toFixed(0))}<br>
+            ${formatNumber(v.toFixed(2))}<br>
         `;
     });
 };

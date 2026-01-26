@@ -19,36 +19,25 @@ cat <- c("Alt Camp", "Alt Empordà", "Alt Penedès", "Alt Urgell", "Alta Ribagor
          "Vallès Occidental", "Vallès Oriental", "Lluçanès"
 )
 
-# non pyrenees counties of catalunya
-non_pyr_cat <- c(
-  "Alt Camp", "Alt Empordà", "Alt Penedès",
-  "Anoia", "Bages", "Baix Camp", "Baix Ebre", "Baix Empordà",
-  "Baix Llobregat", "Baix Penedès", "Barcelonès",
-  "Conca de Barberà", "Garraf", "Garrigues", "Garrotxa", "Gironès",
-  "Maresme", "Moianès", "Montsià", "Noguera", "Osona",
-  "Pla d'Urgell", "Pla de l'Estany", "Priorat", "Ribera d'Ebre",
-  "Segarra", "Segrià", "Selva", "Tarragonès", "Terra Alta",
-  "Urgell", "Vallès Occidental", "Vallès Oriental", "Lluçanès"
-)
-
 # path to socio-economical data
-path <- "../../data/socio-economical"
+path <- "data/socio-economical"
 
 # function to read and process data
-source("R/process_map.R")
+source("R/functions/process.R")
 
 
 # POPULATION -------------------------------------------------------------------
-density <- process_map(
+density <- process(
   folder = "population/density",
   skip = 7,
   n_max = Inf,
-  col_names = c("county", "p_population", "area_km2", "p_density_hkm2"),
-  drop_cols = c("p_density_hkm2"),
-  fun = sum) %>% 
+  col_names = c("county", "p_population", "area_km2", "density_hkm2"),
+  drop_cols = c("density_hkm2"),
+  fun = sum
+) %>% 
   mutate(p_density_hkm2 = p_population/area_km2)
 
-age <- process_map(
+age <- process(
   folder = "population/age",
   skip = 7,
   n_max = 56,
@@ -59,10 +48,10 @@ age <- process_map(
          p_25_64 = p_25_44 + p_45_64,
          p_0_24_pct = round(p_0_24/Total*100, 2),
          p_25_64_pct = round(p_25_64/Total*100, 2),
-         p_65imes_pct = round(p_65_i_mes/Total*100, 2)) %>% 
+         p_65imes_pct = round(p_65_i_mes/Total*100, 2))%>% 
   select(-Total, -p_0_15, -p_16_24, -p_25_44, -p_45_64, -p_65_i_mes, -p_25_64, -p_0_24)
 
-men <- process_map(
+men <- process(
   folder = "population/age",
   skip = 70,
   n_max = 56,
@@ -70,7 +59,7 @@ men <- process_map(
   drop_cols = c("p_0_15", "p_16_24", "p_25_44", "p_45_64", "p_65_i_mes"),
   fun = sum)
 
-women <- process_map(
+women <- process(
   folder = "population/age",
   skip = 133,
   n_max = Inf,
@@ -84,25 +73,26 @@ gr <- read_csv(file.path(path, "population/growth rate/pop_growth_rate.csv"), sk
   mutate(across(where(function(x) all(x %in% c(NA, ".", "-") | grepl("^[0-9.-]+$", x))), as.numeric))
 
 gr_pyr <- gr %>% 
-  filter(county %in% pyr) 
+  filter(county %in% pyr) %>% 
+  summarise(across(where(is.numeric), mean)) %>% 
+  mutate(region = "Pyrenees")
 
 gr_cat <- gr %>% 
-  filter(county %in% non_pyr_cat) %>% 
+  filter(county == "Catalunya") %>% 
   select(-county) %>% 
-  summarise(across(where(is.numeric), mean, na.rm = T)) %>% 
-  mutate(county = "Catalunya") 
+  mutate(region = "Catalunya")
 
 gr <- bind_rows(gr_pyr, gr_cat) %>% 
-  pivot_longer(cols = 2:26, names_to = "year", values_to = "p_growthrate") %>% 
+  pivot_longer(cols = 1:25, names_to = "year", values_to = "p_growthrate") %>% 
   mutate(year = as.numeric(year)) %>% 
   filter(year > 2014) 
 
-
 population <- list(density, age, gr, men, women) %>% 
-  reduce(full_join, by = c("county", "year"))
+  reduce(full_join, by = c("region", "year"))
+
 # HOUSING ----------------------------------------------------------------------
 
-old <- process_map(
+old <- process(
   folder = "housing/old",
   skip = 8,
   n_max = Inf,
@@ -111,7 +101,7 @@ old <- process_map(
   fun = mean
 )
 
-new <- process_map(
+new <- process(
   folder = "housing/new",
   skip = 8,
   n_max = Inf,
@@ -121,12 +111,12 @@ new <- process_map(
 )
 
 housing <- list(old, new) %>% 
-  reduce(full_join, by = c("county", "year"))
+  reduce(full_join, by = c("region", "year"))
 
 
 # ECONOMY ----------------------------------------------------------------------
 
-gdp <- process_map(
+gdp <- process(
   folder = "economy/GDP",
   skip = 6,
   n_max = Inf,
@@ -135,7 +125,7 @@ gdp <- process_map(
   fun = sum
 )
 
-gva <- process_map(
+gva <- process(
   folder = "economy/GVA",
   skip = 7,
   n_max = 43,
@@ -144,7 +134,7 @@ gva <- process_map(
   fun = sum
 )
 
-gdhi <- process_map(
+gdhi <- process(
   folder = "economy/GDHI",
   skip = 7,
   n_max = Inf,
@@ -158,20 +148,21 @@ rib <- read_csv(file.path(path, "economy/rib/real_investment_budget.csv"), skip 
   mutate(across(where(function(x) all(x %in% c(NA, ".", "-") | grepl("^[0-9.-]+$", x))), as.numeric))
 
 rib_pyr <- rib %>% 
-  filter(county %in% pyr) 
+  filter(county %in% pyr) %>% 
+  summarise(across(where(is.numeric), sum)) %>% 
+  mutate(region = "Pyrenees")
 
 rib_cat <- rib %>% 
-  filter(county %in% non_pyr_cat)%>% 
+  filter(county == "Catalunya") %>% 
   select(-county) %>% 
-  summarise(across(where(is.numeric), sum, na.rm = T)) %>% 
-  mutate(county = "Catalunya")
+  mutate(region = "Catalunya")
 
 rib <- bind_rows(rib_pyr, rib_cat) %>% 
-  pivot_longer(cols = 2:23, names_to = "year", values_to = "e_rib") %>% 
+  pivot_longer(cols = 1:22, names_to = "year", values_to = "e_rib") %>% 
   mutate(year = as.numeric(year)) %>% 
   filter(year > 2014) 
 
-pit <- process_map(
+pit <- process(
   folder = "economy/personal income tax",
   skip = 8,
   n_max = Inf,
@@ -180,7 +171,7 @@ pit <- process_map(
   fun = mean
 )
 
-ret <- process_map(
+ret <- process(
   folder = "economy/rural estate tax",
   skip = 8,
   n_max = Inf,
@@ -189,7 +180,7 @@ ret <- process_map(
   fun = mean
 )
 
-uet <- process_map(
+uet <- process(
   folder = "economy/urban estate tax",
   skip = 8,
   n_max = Inf,
@@ -198,13 +189,14 @@ uet <- process_map(
   fun = mean
 )
 
-
 economy <- list(gdp, gva, gdhi, rib, pit, ret, uet) %>% 
-  reduce(full_join, by = c("county", "year"))
+  reduce(full_join, by = c("region", "year"))
+
+
 
 # WORK -------------------------------------------------------------------------
 
-active <- process_map(
+active <- process(
   folder = "work/active",
   skip = 6,
   n_max = 54,
@@ -213,7 +205,7 @@ active <- process_map(
   fun = sum
 )
 
-active_men <- process_map(
+active_men <- process(
   folder = "work/active",
   skip = 68,
   n_max = 54,
@@ -223,7 +215,7 @@ active_men <- process_map(
 )
 
 
-active_women <- process_map(
+active_women <- process(
   folder = "work/active",
   skip = 130,
   n_max = Inf,
@@ -232,7 +224,7 @@ active_women <- process_map(
   fun = sum
 )
 
-inactive <- process_map(
+inactive <- process(
   folder = "work/inactive",
   skip = 8,
   n_max = 54,
@@ -241,7 +233,7 @@ inactive <- process_map(
   fun = sum
 )
 
-inactive_men <- process_map(
+inactive_men <- process(
   folder = "work/inactive",
   skip = 70,
   n_max = 54,
@@ -250,7 +242,7 @@ inactive_men <- process_map(
   fun = sum
 )
 
-inactive_women <- process_map(
+inactive_women <- process(
   folder = "work/inactive",
   skip = 132,
   n_max = Inf,
@@ -259,7 +251,7 @@ inactive_women <- process_map(
   fun = sum
 )
 
-unemp <- process_map(
+unemp <- process(
   folder = "work/unemployment",
   skip = 8,
   n_max = 54,
@@ -268,7 +260,7 @@ unemp <- process_map(
   fun = sum
 )
 
-unemp_men <- process_map(
+unemp_men <- process(
   folder = "work/unemployment",
   skip = 72,
   n_max = 54,
@@ -278,7 +270,7 @@ unemp_men <- process_map(
 )
 
 
-unemp_women <- process_map(
+unemp_women <- process(
   folder = "work/unemployment",
   skip = 136,
   n_max = Inf,
@@ -289,11 +281,12 @@ unemp_women <- process_map(
 
 
 work <- list(active, active_men, active_women, inactive, inactive_men, inactive_women, unemp, unemp_men, unemp_women) %>% 
-  reduce(full_join, by = c("county", "year"))
+  reduce(full_join, by = c("region", "year"))
+
 
 # EDUCATION --------------------------------------------------------------------
 # 15 and higher
-edu <- process_map(
+edu <- process(
   folder = "education",
   skip = 7,
   n_max = Inf,
@@ -311,12 +304,12 @@ education <- edu %>%
          edu_primary_pct = round(edu_primary/total*100, 2),
          edu_secondary_pct = round(edu_secondary/total*100, 2),
          edu_university_pct = round(edu_university/total*100, 2)) %>% 
-  select(county, year, edu_illiterate_pct, edu_primary_pct, edu_secondary_pct, edu_university_pct)
+  select(region, year, edu_illiterate_pct, edu_primary_pct, edu_secondary_pct, edu_university_pct)
 
 
 # ENGAGEMENT -------------------------------------------------------------------
 
-assoc <- process_map(
+assoc <- process(
   folder = "engagement/associations",
   skip = 11,
   n_max = Inf,
@@ -325,7 +318,7 @@ assoc <- process_map(
   fun = sum 
 )
 
-found <- process_map(
+found <- process(
   folder = "engagement/foundations",
   skip = 7,
   n_max = Inf,
@@ -335,21 +328,31 @@ found <- process_map(
 )
 
 engagement <- list(assoc, found)%>% 
-  reduce(full_join, by = c("county", "year"))
+  reduce(full_join, by = c("region", "year"))
 
 
 # bring all together
-socioeconomy_counties <- list(population, economy, work, education, engagement, housing) %>% 
-  reduce(full_join, by = c("county", "year")) %>% 
+socioeconomy <- list(population, economy, work, education, engagement, housing) %>% 
+  reduce(full_join, by = c("region", "year")) %>% 
   mutate(p_men_pct = p_men/p_population*100,
          p_women_pct = p_women/p_population*100,
-         e_GDP_pi              = round(e_GDP_mileur / p_population * 1e6, 2),
-         e_gva_agri_pi         = round(e_gva_agri / p_population * 1e6, 2),
-         e_gva_industry_pi     = round(e_gva_industry / p_population * 1e6, 2),
-         e_gva_construction_pi = round(e_gva_construction / p_population * 1e6, 2),
-         e_gva_servis_pi       = round(e_gva_servis / p_population * 1e6, 2),
-         e_GDHI_pi             = round(e_GDHI / p_population * 1000, 2),
-         e_GDHI_pc              = ifelse(county == "Catalunya", e_rib/34 ,e_rib),
+         e_GDP_pc               = round(if_else(region == "Pyrenees", e_GDP_mileur / 9,  e_GDP_mileur / 43) * 1e6, 2),
+         e_GDP_pi               = round(e_GDP_mileur / p_population * 1e6, 2),
+           
+         e_gva_agri_pc          = round(if_else(region == "Pyrenees", e_gva_agri / 9,  e_gva_agri / 43) * 1e6, 2),
+         e_gva_agri_pi          = round(e_gva_agri / p_population * 1e6, 2),
+           
+         e_gva_industry_pc      = round(if_else(region == "Pyrenees", e_gva_industry / 9,  e_gva_industry / 43) * 1e6, 2),
+         e_gva_industry_pi      = round(e_gva_industry / p_population * 1e6, 2),
+           
+         e_gva_construction_pc  = round(if_else(region == "Pyrenees", e_gva_construction / 9, e_gva_construction / 43) * 1e6, 2),
+         e_gva_construction_pi  = round(e_gva_construction / p_population * 1e6, 2),
+           
+         e_gva_servis_pc        = round(if_else(region == "Pyrenees", e_gva_servis / 9, e_gva_servis / 43) * 1e6, 2),
+         e_gva_servis_pi        = round(e_gva_servis / p_population * 1e6, 2),
+           
+         e_GDHI_pc              = round(e_GDHI, 2),
+         e_GDHI_pi              = round(e_GDHI / p_population * 1000, 2),
          w_active               = round(w_active / p_population * 100, 2),
          w_active_men           = round(w_active_men / p_men * 100, 2),
          w_active_women         = round(w_active_women / p_women * 100, 2),
@@ -359,14 +362,14 @@ socioeconomy_counties <- list(population, economy, work, education, engagement, 
          w_unemp                = round(w_unemp / p_population * 100, 2),
          w_unemp_men            = round(w_unemp_men / p_men * 100, 2),
          w_unemp_women          = round(w_unemp_women / p_women * 100, 2),
+         e_rib_pc               = if_else(`region` == "Pyrenees", e_rib/9, e_rib/43),
          e_rib_pi               = round(e_rib/p_population*1000000, 2),
-         e_rib_pc               = ifelse(county == "Catalunya", e_rib/34 ,e_rib))
+         e_rib                  = e_rib,
+         eng_found_pc           = if_else(`region` == "Pyrenees", eng_found/9, eng_found/43),
+         eng_assoc_pc           = if_else(`region` == "Pyrenees", eng_assoc/9, eng_assoc/43)
+         )
 
-socioeconomy_counties <- socioeconomy_counties %>%
+socioeconomy <- socioeconomy %>%
   mutate(across(where(is.numeric), ~ round(., 2)))
 
-#socioeconomy_counties$county[socioeconomy_counties$county == "Catalunya"] <- "Non Pyrenees Catalunya"
-
-
-write_json(socioeconomy_counties, "C:/Users/Bianka/Documents/MSc-Internship/Observatory-of-the-Mountains/frontend/data/socio-economy_counties.json", append = FALSE)
-
+write_json(socioeconomy, "Observatory-of-the-Mountains/frontend/data/socio-economy.json", append = FALSE)

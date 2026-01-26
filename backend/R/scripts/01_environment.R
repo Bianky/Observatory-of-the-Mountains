@@ -20,10 +20,10 @@ cat <- c("Alt Camp", "Alt Empordà", "Alt Penedès", "Alt Urgell", "Alta Ribagor
 )
 
 # path to environmental data
-path <- "../../data/environmental"
+path <- "data/environmental"
 
 # function to read and process data
-source("R/process.R")
+source("R/functions/process.R")
 
 
 # CLIMATE ----------------------------------------------------------------------
@@ -51,7 +51,7 @@ climate <- list(preci, temp) %>%
   reduce(full_join, by = c("region", "year"))
 
 # WATER ------------------------------------------------------------------------
-path <- "../../data/socio-economical"
+path <- "data/socio-economical"
 density <- process(
   folder = "population/density",
   skip = 7,
@@ -62,7 +62,7 @@ density <- process(
 ) %>% 
   mutate(p_density_hkm2 = p_population/area_km2)
 
-path <- "../../data/environmental"
+path <- "data/environmental"
 water <- process(
   folder = "water/consump",
   skip = 9,
@@ -96,9 +96,20 @@ refor <- process(
   fun = sum
 )
 
-forest <- list(clearing, refor) %>% 
+fire <- process(
+  folder = "fires",
+  skip = 7,
+  n_max = Inf,
+  col_names = c("county", "fires", "fires_tree_ha", "fires_scrub_ha", "f_fires_ha"),
+  drop_cols = c("fires", "fires_tree_ha", "fires_scrub_ha"),
+  fun = sum
+)
+
+
+forest <- list(clearing, refor, fire, density) %>% 
   reduce(full_join, by = c("region", "year")) %>% 
-  mutate(f_relative_reforested = f_reforested_ha/f_cleared_ha * 100)
+  mutate(f_relative_reforested = f_reforested_ha/f_cleared_ha * 100,
+         f_fire = round(f_fires_ha/(area_km2*100) * 100, 2))
 
 # LANDUSE ----------------------------------------------------------------------
 land <- process(
@@ -110,15 +121,25 @@ land <- process(
   fun = sum
 )
 
-forest <- list(land, forest) %>% 
-  reduce(full_join, by = c("region", "year")) %>% 
-  mutate(across(c("f_reforested_ha", "f_cleared_ha"), ~ .x / l_forests * 100)) %>% 
-  select(-starts_with("l_"))
 
 land <- list(land, density) %>% 
   reduce(full_join, by = c("region", "year")) %>% 
-  mutate(across(starts_with("l_"), ~ .x /(area_km2*100) * 100)) 
-
+  mutate(l_agri = l_crop_dry + l_crop_irri,
+         across(starts_with("l_"), ~ .x /(area_km2*100) * 100))
+  
+land <- land %>% 
+  filter(!(year == 2024)) %>% 
+  group_by(region) %>% 
+  arrange(year) %>% 
+  mutate(l_forest_roc = ((l_forests - lag(l_forests)) / lag(l_forests)) * 100 / (year - lag(year)),
+         l_bushes_roc = ((l_bushes - lag(l_bushes)) / lag(l_bushes)) * 100 / (year - lag(year)),
+         l_agri_roc = ((l_agri - lag(l_agri)) / lag(l_agri)) * 100 / (year - lag(year)),
+         l_novege_roc = ((l_novege - lag(l_novege)) / lag(l_novege)) * 100 / (year - lag(year)),
+         l_urban_roc = ((l_urban - lag(l_urban)) / lag(l_urban)) * 100 / (year - lag(year)),
+         l_others_roc = ((l_others - lag(l_others)) / lag(l_others)) * 100 / (year - lag(year))) %>% 
+  ungroup() %>% 
+  rowwise() %>% 
+  mutate(lc_sum = sum(abs(c_across(ends_with("_roc"))))) 
 
 #pollution 
 mun <- process(
@@ -199,7 +220,7 @@ farm <- list (org, tot) %>%
 environment <- list(climate, water, forest, land, farm, waste) %>% 
   reduce(full_join, by = c("region", "year"))
 
-write_json(environment, "C:/Users/Bianka/Documents/MSc-Internship/Observatory-of-the-Mountains/frontend/data/environment.json", append = FALSE)
+write_json(environment, "Observatory-of-the-Mountains/frontend/data/environment.json", append = FALSE)
 
 
 
