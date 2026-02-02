@@ -16,6 +16,8 @@ let currentVariable = null;
 let regionLayer;
 let countyLayer;
 
+
+
 // paths to data
 const geometry = "./data/geometry_regions.geojson";
 const geometry_counties = "./data/geometry_counties.geojson";
@@ -268,11 +270,16 @@ function createMap() {
         return;
     }
 
-    map = L.map('map').setView([41.6, 1.9], 8);
+    map = L.map('map', {
+        zoomControl: false  // disable default top-left zoom
+    }).setView([41.4, 2.8], 8);
 
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
+
+    // Add zoom control at bottom-left
+    L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
     legend.addTo(map);  // ← move legend here (VERY IMPORTANT)
 }
@@ -294,9 +301,9 @@ function mapGeoJSON(data, type) {
     const layer = L.geoJson(data, {
         style: function(feature) {
             if (type === "regions" && feature.properties.region === "Catalunya") {
-                return { color: "#807768", weight: 2, fillColor: "#807768", fillOpacity: 1 };
+                return { color: "#4a4233", weight: 2, fillColor: "#4a4233", fillOpacity: 1 };
             }
-            return { color: "#d8e0e3", weight: 1, fillColor: "#d8e0e3", fillOpacity: 1 };
+            return { color: "#e7e8e8", weight: 1, fillColor: "#e7e8e8", fillOpacity: 1 };
         }
     }).addTo(map);
 
@@ -308,13 +315,13 @@ function mapGeoJSON(data, type) {
 
     // Layer for other counties
     countyLayer = L.geoJson({ ...data, features: otherCounties }, {
-        style: { color: "#d8e0e3", weight: 1, fillColor: "#d8e0e3", fillOpacity: 1 }
+        style: { color: "#e7e8e8", weight: 1, fillColor: "#e7e8e8", fillOpacity: 1 }
     }).addTo(map);
 
     // Layer for Catalunya separately
     if(catalunyaFeature) {
         catalunyaLayer = L.geoJson(catalunyaFeature, {
-            style: { color: "#807768", weight: 2, fillColor: "#807768", fillOpacity: 1 }
+            style: { color: "#4a4233", weight: 2, fillColor: "#4a4233", fillOpacity: 1 }
         }).addTo(map);
     }
 
@@ -478,15 +485,15 @@ function buildLineChart(variable, dataset) {
                 { 
                     label: "Catalunya", 
                     data: catalunyaValues, 
-                    borderColor: "#d8e0e3", 
-                    backgroundColor: "#d8e0e3",
+                    borderColor: "#e7e8e8", 
+                    backgroundColor: "#e7e8e8",
                     fill: false 
                 },
                 { 
                     label: "Pyrenees", 
                     data: pyreneesValues,         
-                    borderColor: "#807768",     
-                    backgroundColor: "#807768", 
+                    borderColor: "#4a4233",     
+                    backgroundColor: "#4a4233", 
                     fill: false
                 }
             ]
@@ -505,9 +512,9 @@ function buildLineChart(variable, dataset) {
                 }
             },
             scales: {
-                x: { title: { display: true, text: "Year", font: {size: 17, weight: 'bold', family: "monospace" } } },
+                x: { title: { display: true, text: "Year", font: {size: 17, family: "sans" } } },
                 y: { 
-                    title: { display: true, text: variableNames[variable], font: {size: 17, weight: 'bold', family: "monospace" }  || variable },
+                    title: { display: true, text: variableNames[variable], font: {size: 17, family: "sans" }  || variable },
 
                     ticks: {
                         callback: function(value) {
@@ -519,7 +526,6 @@ function buildLineChart(variable, dataset) {
         }
     });
 }
-
 function getColorScale(values) {
     const min = Math.min(...values);
     const max = Math.max(...values);
@@ -529,26 +535,26 @@ function getColorScale(values) {
         return {
             min,
             max,
-            scale: () => "#807768"
+            scale: () => "#1f1914"
         };
     }
 
-    // Convert hex #807768 to HSL
-    const baseColor = { h: 36, s: 9, l: 46 };  
-    // (#807768 converted → hsl(36, 9%, 46%))
+    // Low and high colors
+    const lowColor = { r: 231, g: 232, b: 232 }; // #e7e8e8
+    const highColor = { r: 31, g: 25, b: 20 };   // #1f1914
 
     return {
         min,
         max,
         scale: (v) => {
-            const t = (v - min) / (max - min);  // 0 → low, 1 → high
+            const t = (v - min) / (max - min); // 0 → low, 1 → high
 
-            // Lighten for low values, darken for high values
-            const lightness = 70 - (t * 40);   
-            // → low values → 70%
-            // → high values → 30%
+            // Linear interpolation for each RGB channel
+            const r = Math.round(lowColor.r + t * (highColor.r - lowColor.r));
+            const g = Math.round(lowColor.g + t * (highColor.g - lowColor.g));
+            const b = Math.round(lowColor.b + t * (highColor.b - lowColor.b));
 
-            return `hsl(${baseColor.h}, ${baseColor.s}%, ${lightness}%)`;
+            return `rgb(${r}, ${g}, ${b})`;
         }
     };
 }
@@ -559,7 +565,7 @@ function formatNumber(num) {
     return new Intl.NumberFormat("fr-FR").format(num);
 }
 
-let legend = L.control({position: "bottomright"});
+let legend = L.control({position: "topleft"});
 
 legend.onAdd = function () {
     this._div = L.DomUtil.create("div", "info legend");
@@ -573,7 +579,8 @@ legend.update = function (min = 0, max = 1, scale = () => "#ccc") {
         i => min + i * (max - min) / (steps - 1)
     );
 
-    this._div.innerHTML = `<strong>${variableNames[currentVariable] || currentVariable}</strong><br>`;
+    this._div.innerHTML = `<strong style="font-family: sans;">${variableNames[currentVariable] || currentVariable}</strong><br>`;
+
 
     range.forEach(v => {
         this._div.innerHTML += `
@@ -605,7 +612,7 @@ function updateChoropleth(year, variable, type = "socio") {
         layer.setStyle({
             fillColor: scale(value),
             fillOpacity: 1,
-            color: "#666",
+            color: "#1f1914",
             weight: 1
         });
 
@@ -624,7 +631,7 @@ function updateChoropleth(year, variable, type = "socio") {
             layer.setStyle({
                 fillColor: scale(value),
                 fillOpacity: 1,
-                color: "#666",
+                color: "#1f1914",
                 weight: 2   // you can keep it thicker if you like
             });
 
