@@ -495,8 +495,8 @@ function buildLineChart(variable, dataset) {
                 { 
                     label: "Pyrenees", 
                     data: pyreneesValues,         
-                    borderColor: "#3a4d38",     
-                    backgroundColor: "#3a4d38", 
+                    borderColor: "#20371e",     
+                    backgroundColor: "#20371e", 
                     fill: false
                 }
             ]
