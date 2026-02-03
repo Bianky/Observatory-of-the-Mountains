@@ -1,4 +1,5 @@
 
+
 // Global variables
 let map;
 let socioData;
@@ -274,8 +275,10 @@ function createMap() {
         zoomControl: false  // disable default top-left zoom
     }).setView([41.4, 2.8], 8);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    
+    //L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     }).addTo(map);
 
     // Add zoom control at bottom-left
@@ -485,15 +488,15 @@ function buildLineChart(variable, dataset) {
                 { 
                     label: "Catalunya", 
                     data: catalunyaValues, 
-                    borderColor: "#e7e8e8", 
-                    backgroundColor: "#e7e8e8",
+                    borderColor: "#b6a89f", 
+                    backgroundColor: "#b6a89f",
                     fill: false 
                 },
                 { 
                     label: "Pyrenees", 
                     data: pyreneesValues,         
-                    borderColor: "#4a4233",     
-                    backgroundColor: "#4a4233", 
+                    borderColor: "#3a4d38",     
+                    backgroundColor: "#3a4d38", 
                     fill: false
                 }
             ]
@@ -610,6 +613,7 @@ function updateChoropleth(year, variable, type = "socio") {
         const value = row ? row[variable] : null;
 
         layer.setStyle({
+            fill: true,
             fillColor: scale(value),
             fillOpacity: 1,
             color: "#1f1914",
@@ -629,10 +633,11 @@ function updateChoropleth(year, variable, type = "socio") {
             const value = row ? row[variable] : null;
 
             layer.setStyle({
+                fill: true,
                 fillColor: scale(value),
                 fillOpacity: 1,
                 color: "#1f1914",
-                weight: 2   // you can keep it thicker if you like
+                weight: 1   // you can keep it thicker if you like
             });
 
             layer.bindPopup(`
